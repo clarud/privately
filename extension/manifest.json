@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "Privacy Guardian",
+  "version": "0.1.0",
+  "description": "Grammarly-like inline privacy detector.",
+  "icons": {
+    "16": "assets/icon16.png",
+    "48": "assets/icon48.png",
+    "128": "assets/icon128.png"
+  },
+  "permissions": ["storage"],
+  "host_permissions": ["http://localhost:8000/*"],
+  "action": { "default_popup": "src/popup.html" },
+  "options_page": "src/options.html",
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["src/content.js"],
+      "css": ["src/overlay.css"],
+      "run_at": "document_idle"
+    }
+  ]
+}

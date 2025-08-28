@@ -1,0 +1,6 @@
+.pg-tip {
+  position:absolute; z-index:2147483647;
+  background:#111; color:#fff; padding:8px 10px; border-radius:8px;
+  font:12px/1.3 system-ui; box-shadow:0 6px 20px rgba(0,0,0,.25);
+}
+.pg-tip button { background:#fff; border:0; padding:4px 8px; margin:0 4px; border-radius:6px; cursor:pointer; }

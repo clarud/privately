@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Privacy Guardian</title>
+    <style>
+      body { font: 14px system-ui; min-width: 280px; padding: 12px; }
+      h3 { margin: 0 0 8px; }
+      .row { display:flex; align-items:center; gap:8px; margin:6px 0; }
+      .pill { padding:2px 8px; border-radius:9999px; background:#f3f4f6; }
+      .muted { color:#6b7280; font-size:12px; }
+      ul { padding-left: 16px; margin: 8px 0; }
+      button { cursor:pointer; padding:6px 10px; border:0; border-radius:8px; background:#111; color:#fff; }
+      button.secondary { background:#e5e7eb; color:#111; }
+      .actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
+      .count-dot { display:inline-block; width:8px; height:8px; border-radius:9999px; margin-right:6px; }
+      .blue{background:#3b82f6}.green{background:#22c55e}.red{background:#ef4444}
+      .purple{background:#a855f7}.amber{background:#f59e0b}.cyan{background:#06b6d4}
+      .score { font-weight:600; }
+    </style>
+  </head>
+  <body>
+    <h3>Privacy Guardian</h3>
+
+    <div class="row">
+      <label class="row" style="flex:1 1 auto;">
+        <input id="enabled" type="checkbox" />
+        <span>Enabled</span>
+      </label>
+      <label class="row">
+        <span class="muted">Mode</span>
+        <select id="mode">
+          <option value="balanced">balanced</option>
+          <option value="strict">strict</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="row">
+      <div class="pill"><span class="muted">Score</span> <span id="score" class="score">&mdash;</span></div>
+      <span class="muted">Higher is better</span>
+    </div>
+
+    <div class="muted" style="margin-top:6px;">Detections (totals)</div>
+    <ul id="counts"></ul>
+
+    <div class="actions">
+      <button id="openOptions" class="secondary">Options</button>
+      <button id="resetCounts" class="secondary">Reset counts</button>
+      <button id="openTest">Open Test Pad</button>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
