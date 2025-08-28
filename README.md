@@ -1,6 +1,6 @@
 # privately
 Chrome extension that flags out confidential information
-
+'''
 privately/
 ├─ extension/                 # Chrome extension (MV3)
 │  ├─ manifest.json
@@ -17,3 +17,4 @@ privately/
 │     └─ options.js           # settings (categories, modes)
 ├─ web-dashboard/             # Lynx web dashboard
 └─ README.md                  
+'''
