@@ -73,7 +73,44 @@ const handle = debounce((el)=>{
   if (!prefs.enabled) return;
   if (prefs.allowlist[location.host]) return;
   const text = el.isContentEditable ? el.innerText : el.value;
-  attachTip(el, detect(text));
+
+  // Send text to FastAPI backend for analysis
+  fetch('http://127.0.0.1:8000/detect', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      text: text,
+      threshold: 0.65,
+      per_label_threshold: { "PER": 0.65, "ADDR": 0.70, "ORG": 0.75 },
+      max_len: 256,
+      stride_chars: 512
+    })
+  })
+    .then(response => response.json())
+    .then(data => {
+      console.log('Backend response:', data);
+      
+      // Convert backend spans to your format
+      const backendSpans = data.spans.map(span => ({
+        start: span.start,
+        end: span.end,
+        label: span.label,
+        confidence: span.score
+      }));
+      
+      // Combine local detection with backend results
+      const localSpans = detect(text);
+      const allSpans = [...localSpans, ...backendSpans];
+      
+      attachTip(el, allSpans);
+    })
+    .catch(error => {
+      console.error('Error connecting to backend:', error);
+      // Fallback to local detection if backend fails
+      attachTip(el, detect(text));
+    });
+
+  // Remove the standalone attachTip call since we're now doing it in the fetch callback
 }, DEBOUNCE_MS);
 
 document.addEventListener('focusin',(e)=>{
