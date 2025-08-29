@@ -1,0 +1,66 @@
+# --- OS & Editors ---
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+.vscode/
+
+# --- Node / Next.js ---
+node_modules/
+apps/**/node_modules/g
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.next/
+out/
+.vercel/
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+.eggs/
+*.egg-info/
+dist/
+build/
+pip-wheel-metadata/
+.tox/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+ENV/
+
+# --- Coverage & Reports ---
+coverage/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+
+# --- Logs ---
+logs/
+*.log
+
+# --- Env files (keep examples only) ---
+.env
+.env.*
+services/**/.env
+apps/**/.env*
+!**/.env.example
+!**/.env.local.example
+
+# --- Local DB & runtime files ---
+*.sqlite3
+*.db
+*.pid
+dump.rdb
+
+# --- Others ---
+database/documents/*
+sentinel-ai/
+
+*.pem
