@@ -6,7 +6,7 @@
 const ONNXInference = {
   labels: null,
   isLoaded: false,
-  serverUrl: 'http://127.0.0.1:8000', // FastAPI server URL
+  serverUrl: 'https://privately-backend.onrender.com', // FastAPI server URL
   
   /**
    * Initialize connection to FastAPI server

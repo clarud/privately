@@ -9,7 +9,7 @@
     "128": "assets/privately_logo.png"
   },
   "permissions": ["storage"],
-  "host_permissions": ["http://localhost:8000/*"],
+  "host_permissions": ["https://privately-backend.onrender.com/*"],
   "web_accessible_resources": [
     {
       "resources": [],

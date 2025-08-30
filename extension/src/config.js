@@ -5,7 +5,7 @@
 // Application Configuration
 const CONFIG = {
   DEBOUNCE_MS: 250,
-  BACKEND_URL: 'http://127.0.0.1:8000/',
+  BACKEND_URL: 'https://privately-backend.onrender.com/',
   MIN_ENTROPY_THRESHOLD: 3.5,
   JWT_ENTROPY_THRESHOLD: 3.8,
   SECRET_ENTROPY_THRESHOLD: 3.6,
