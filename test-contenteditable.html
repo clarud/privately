@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test ContentEditable with P tags</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        .chatgpt-style {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            min-height: 200px;
+            font-size: 16px;
+            line-height: 1.5;
+            background: #fff;
+            width: 100%;
+            max-width: 600px;
+        }
+        .chatgpt-style p {
+            margin: 0 0 10px 0;
+        }
+        .chatgpt-style p:last-child {
+            margin-bottom: 0;
+        }
+        .test-input {
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 10px;
+            width: 100%;
+            max-width: 600px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test ContentEditable with P tags (like ChatGPT)</h1>
+    
+    <h2>ChatGPT-style ContentEditable (with P tags)</h2>
+    <div class="chatgpt-style" contenteditable="true" placeholder="Type here...">
+        <p>My name is John Doe and I live at 123 Main Street.</p>
+        <p>You can call me at +65 9123 4567 or email john@example.com.</p>
+        <p>My credit card number is 4111 1111 1111 1111.</p>
+    </div>
+    
+    <h2>Regular Input Field</h2>
+    <input type="text" class="test-input" value="My name is Jane Smith, phone +65 8765 4321, email jane@test.com" placeholder="Type here...">
+    
+    <h2>Regular Textarea</h2>
+    <textarea class="test-input" rows="4" placeholder="Type here...">My address is 456 Oak Avenue
+My NRIC is S1234567A
+Credit card: 5555 5555 5555 4444</textarea>
+    
+    <h2>Simple ContentEditable (no P tags)</h2>
+    <div class="chatgpt-style" contenteditable="true" style="border-color: #007acc;">My name is Bob Wilson, I live at 789 Pine Street, phone +65 6123 7890</div>
+
+    <script>
+        // Add some basic formatting behavior like ChatGPT
+        document.addEventListener('keydown', function(e) {
+            if (e.target.contentEditable === 'true') {
+                if (e.key === 'Enter') {
+                    // Create new paragraph on Enter
+                    e.preventDefault();
+                    const selection = window.getSelection();
+                    const range = selection.getRangeAt(0);
+                    
+                    const p = document.createElement('p');
+                    p.innerHTML = '<br>';
+                    range.insertNode(p);
+                    
+                    // Move cursor to new paragraph
+                    range.setStart(p, 0);
+                    range.setEnd(p, 0);
+                    selection.removeAllRanges();
+                    selection.addRange(range);
+                }
+            }
+        });
+        
+        console.log('🧪 Test page loaded. Load the extension and try typing sensitive data!');
+    </script>
+</body>
+</html>

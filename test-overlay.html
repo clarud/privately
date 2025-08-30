@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Overlay Highlighting</title>
+    <style>
+        body {
+            padding: 50px;
+            font-family: Arial, sans-serif;
+        }
+        
+        .test-input {
+            width: 400px;
+            height: 40px;
+            font-size: 16px;
+            padding: 10px;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+        
+        .contenteditable-test {
+            width: 400px;
+            min-height: 40px;
+            font-size: 16px;
+            padding: 10px;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test Privacy Extension Highlighting</h1>
+    
+    <h2>Regular Input Field:</h2>
+    <input type="text" class="test-input" placeholder="Type an email like john@example.com">
+    
+    <h2>Textarea:</h2>
+    <textarea class="test-input" placeholder="Type an email like john@example.com"></textarea>
+    
+    <h2>ContentEditable Div:</h2>
+    <div class="contenteditable-test" contenteditable="true">Type an email like john@example.com</div>
+    
+    <p>Instructions: Type some sensitive data (like emails) in the fields above. The extension should detect and highlight violations.</p>
+</body>
+</html>
