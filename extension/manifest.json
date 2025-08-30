@@ -12,7 +12,7 @@
   "host_permissions": ["http://localhost:8000/*"],
   "web_accessible_resources": [
     {
-      "resources": ["assets/model.onnx"],
+      "resources": ["assets/model.onnx", "assets/tokenizer.json", "assets/config.json", "assets/label.json"],
       "matches": ["<all_urls>"]
     }
   ],
@@ -22,6 +22,8 @@
     {
       "matches": ["<all_urls>"],
       "js": [
+        "src/smart-categorizer.js",
+        "src/replacement-tracker.js",
         "src/ort.min.js",
         "src/config.js",
         "src/utils.js",

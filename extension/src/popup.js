@@ -4,19 +4,18 @@ const defaults = {
   mode: "balanced",
   categories: {
     EMAIL: true, SG_PHONE: true, URL: true, IP: true, IP_PRIVATE: true,
-    NRIC: true, UEN: true, POSTAL_SG: true, CARD: true, IBAN: true,
+    NRIC: true, POSTAL_SG: true, CARD: true, IBAN: true,
     JWT: true, AWS_KEY: true, SECRET: true, PRIVATE_KEY: true,
     AUTH_HEADER: true, SET_COOKIE: true, FILEPATH: true, UUID: true,
     BASE64_LONG: true, HEX_LONG: true, NAME: true, ADDRESS: true
   },
-  allowlist: {},
   fakeData: {}
 };
 
 // Enhanced label colors for better visual distinction
 const labelColors = {
   EMAIL: "blue", SG_PHONE: "green", URL: "cyan", IP: "purple", IP_PRIVATE: "purple",
-  NRIC: "amber", UEN: "amber", POSTAL_SG: "amber", CARD: "red", IBAN: "red",
+  NRIC: "amber", POSTAL_SG: "amber", CARD: "red", IBAN: "red",
   JWT: "orange", AWS_KEY: "orange", SECRET: "red", PRIVATE_KEY: "red",
   AUTH_HEADER: "purple", SET_COOKIE: "purple", FILEPATH: "gray", UUID: "gray",
   BASE64_LONG: "indigo", HEX_LONG: "indigo", NAME: "teal", ADDRESS: "teal"
@@ -25,7 +24,7 @@ const labelColors = {
 // Category groupings for better organization
 const categoryGroups = {
   "Contact & Personal": ["EMAIL", "SG_PHONE", "NAME", "ADDRESS"],
-  "Financial & IDs": ["CARD", "IBAN", "NRIC", "UEN"],
+  "Financial & IDs": ["CARD", "IBAN", "NRIC"],
   "Security & Keys": ["SECRET", "JWT", "AWS_KEY", "PRIVATE_KEY"],
   "Technical": ["URL", "IP", "IP_PRIVATE", "UUID", "BASE64_LONG", "HEX_LONG"],
   "System & Headers": ["AUTH_HEADER", "SET_COOKIE", "FILEPATH", "POSTAL_SG"]

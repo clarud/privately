@@ -11,7 +11,6 @@ const ALL_DETECTION_CATEGORIES = {
   IP: true,
   IP_PRIVATE: true,
   NRIC: true,
-  UEN: true,
   POSTAL_SG: true,
   CARD: true,
   IBAN: true,
@@ -38,7 +37,6 @@ const DEFAULT_FAKE_DATA = {
   IP_PRIVATE: "10.0.0.1",
   CARD: "4242 4242 4242 4242",
   NRIC: "S1234567A",
-  UEN: "12345678A",
   POSTAL_SG: "123456",
   IBAN: "GB82WEST12345698765432",
   JWT: "eyJhbGciOiJIUzI1NiJ9.fake.signature",
@@ -63,7 +61,6 @@ const CATEGORY_DESCRIPTIONS = {
   IP: "IP addresses",
   IP_PRIVATE: "Private IP addresses",
   NRIC: "Singapore NRIC/FIN",
-  UEN: "Singapore UEN numbers",
   POSTAL_SG: "Singapore postal codes",
   CARD: "Credit card numbers",
   IBAN: "International bank accounts",
@@ -86,7 +83,6 @@ const DEFAULT_PREFERENCES = {
   enabled: true,
   mode: "balanced",
   categories: { ...ALL_DETECTION_CATEGORIES },
-  allowlist: {},
   fakeData: { ...DEFAULT_FAKE_DATA }
 };
 
@@ -109,10 +105,6 @@ function initializeOptionsPage() {
       categories: { 
         ...DEFAULT_PREFERENCES.categories, 
         ...(pg_prefs.categories || {}) 
-      },
-      allowlist: { 
-        ...DEFAULT_PREFERENCES.allowlist, 
-        ...(pg_prefs.allowlist || {}) 
       },
       fakeData: { 
         ...DEFAULT_FAKE_DATA, 
@@ -140,7 +132,7 @@ function renderOptionsPage() {
   console.log('Starting to render options page...');
   
   // Check if required DOM elements exist
-  const requiredElements = ['enabled', 'mode', 'categories', 'fake-data', 'allowlist'];
+  const requiredElements = ['enabled', 'mode', 'categories', 'fake-data'];
   const missingElements = [];
   
   requiredElements.forEach(id => {
@@ -162,7 +154,6 @@ function renderOptionsPage() {
   renderGeneralSettings();
   renderDetectionCategories();
   renderFakeDataSettings();
-  renderAllowlistSettings();
   
   console.log('Options page rendering complete');
 }
@@ -298,42 +289,6 @@ function renderFakeDataSettings() {
   });
   
   console.log(`Rendered ${fakeDataContainer.children.length} fake data inputs`);
-}
-
-/**
- * Render allowlist settings section
- */
-function renderAllowlistSettings() {
-  const allowlistContainer = document.getElementById('allowlist');
-  allowlistContainer.innerHTML = '';
-
-  const allowedSites = Object.keys(currentPreferences.allowlist).filter(
-    site => currentPreferences.allowlist[site] === true
-  );
-
-  if (allowedSites.length === 0) {
-    allowlistContainer.innerHTML = '<p style="color: #666; font-style: italic;">No sites in allowlist</p>';
-    return;
-  }
-
-  allowedSites.forEach(site => {
-    const allowlistItem = document.createElement('div');
-    allowlistItem.className = 'allowlist-item';
-    
-    allowlistItem.innerHTML = `
-      <span class="allowlist-url">${site}</span>
-      <button class="remove-allowlist" data-site="${site}">Remove</button>
-    `;
-
-    const removeButton = allowlistItem.querySelector('button');
-    removeButton.onclick = () => {
-      delete currentPreferences.allowlist[site];
-      savePreferences();
-      renderAllowlistSettings(); // Re-render this section
-    };
-
-    allowlistContainer.appendChild(allowlistItem);
-  });
 }
 
 /**

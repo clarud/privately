@@ -74,19 +74,31 @@ header p {
 
 .toggle-label {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   cursor: pointer;
   font-weight: 500;
+  gap: 12px;
 }
 
 .toggle-label input[type="checkbox"] {
-  margin-right: 12px;
+  margin-top: 2px; /* Align with first line of text */
   accent-color: var(--pg-primary);
   transform: scale(1.2);
+  flex-shrink: 0;
 }
 
 .toggle-text {
   color: var(--pg-dark);
+  flex: 1;
+}
+
+.toggle-description {
+  display: block;
+  font-size: 12px;
+  color: #666;
+  font-weight: 400;
+  margin-top: 4px;
+  line-height: 1.4;
 }
 
 label[for] {

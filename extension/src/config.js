@@ -11,8 +11,8 @@ const CONFIG = {
   SECRET_ENTROPY_THRESHOLD: 3.6,
   TOOLTIP_POSITION: 'auto', // Options: 'right', 'left', 'top', 'bottom', 'auto'
   ONNX_MODEL_PATH: '/assets/model.onnx',
-  ONNX_MODEL_LABELS: ['O', 'B-PER', 'I-PER', 'B-ADDR', 'I-ADDR'], // Common NER labels
-  ONNX_CONFIDENCE_THRESHOLD: 0.6 // Only accept predictions >60% confidence
+  ONNX_MODEL_LABELS: ['O', 'B-NAME', 'I-NAME', 'B-ADDR', 'I-ADDR'], // Proper labels from server config
+  ONNX_CONFIDENCE_THRESHOLD: 0.2 // Only accept predictions >80% confidence
 };
 
 // Detection patterns for various sensitive data types
@@ -25,7 +25,7 @@ const DETECTORS = {
     rx: /(\+65[\s-]?)?[3689]\d{7}/g 
   },
   URL: { 
-    rx: /https?:\/\/[^\s'"]+/g 
+    rx: /(?:https?:\/\/|www\.)[^\s'"<>(){}[\]]+/g 
   },
   IP: {
     rx: /\b(?:\d{1,3}\.){3}\d{1,3}\b/g,
@@ -37,9 +37,6 @@ const DETECTORS = {
     rx: /\b[STFGM]\d{7}[A-Z]\b/g,
     validate: (value) => ValidationHelpers.isValidNRIC(value),
   },
-  UEN1: { rx: /\b\d{8}[A-Z]\b/g, label: "UEN" },
-  UEN2: { rx: /\b\d{9}[A-Z]\b/g, label: "UEN" },
-  UEN3: { rx: /\b[TSR]\d{2}[A-Z0-9]{2}\d{4}[A-Z]\b/g, label: "UEN" },
   POSTAL_SG: { rx: /\b\d{6}\b/g },
 
   // Financial & Authentication
@@ -94,7 +91,6 @@ const FAKE_DATA_MAP = {
   IP_PRIVATE: "10.0.0.1",
   CARD: "4242 4242 4242 4242",
   NRIC: "S1234567A",
-  UEN: "12345678A",
   POSTAL_SG: "123456",
   IBAN: "GB82WEST12345698765432",
   JWT: "eyJhbGciOiJIUzI1NiJ9.fake.signature",
@@ -117,12 +113,11 @@ const DEFAULT_PREFERENCES = {
   mode: "balanced",
   categories: {
     EMAIL: true, SG_PHONE: true, URL: true, IP: true, IP_PRIVATE: true,
-    NRIC: true, UEN: true, POSTAL_SG: true, CARD: true, IBAN: true,
+    NRIC: true, POSTAL_SG: true, CARD: true, IBAN: true,
     JWT: true, AWS_KEY: true, SECRET: true, PRIVATE_KEY: true,
     AUTH_HEADER: true, SET_COOKIE: true, FILEPATH: true, UUID: true,
     BASE64_LONG: true, HEX_LONG: true, NAME: true, ADDRESS: true
   },
-  allowlist: {},
   fakeData: { ...FAKE_DATA_MAP }
 };
 

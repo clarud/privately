@@ -104,6 +104,12 @@ const DOMHelpers = {
               e.preventDefault();
               e.stopPropagation();
               console.log('🖱️ Clicked violation:', label, textToHighlight);
+              
+              // Close any existing main tooltips when showing inline tooltip
+              if (typeof TooltipManager !== 'undefined' && TooltipManager.removeAllTooltips) {
+                TooltipManager.removeAllTooltips();
+              }
+              
               DOMHelpers.showInlineTooltip(highlight, { label, text: textToHighlight });
             });
             
@@ -216,11 +222,14 @@ const DOMHelpers = {
    * Show violation-specific tip with replacement actions
    */
   showViolationTip: (element, tipData) => {
-    // Remove any existing tips
+    // Remove any existing tips (both main tooltips and inline tips)
     const existingTip = document.querySelector('.pg-tip');
     if (existingTip) {
       existingTip.remove();
     }
+    
+    // Also remove any quick previews
+    DOMHelpers.hideQuickPreview();
     
     const tip = document.createElement('div');
     tip.className = 'pg-tip pg-inline-tip';
@@ -268,22 +277,24 @@ const DOMHelpers = {
     document.body.appendChild(tip);
     
     // Auto-hide after 10 seconds
-    setTimeout(() => {
+    const autoHideTimeout = setTimeout(() => {
       if (tip.parentNode) {
         tip.remove();
       }
     }, 10000);
     
-    // Hide when clicking elsewhere
+    // Hide when clicking elsewhere (use global click handler approach)
     const hideOnClick = (e) => {
       if (!tip.contains(e.target) && !element.contains(e.target)) {
         tip.remove();
-        document.removeEventListener('click', hideOnClick);
+        clearTimeout(autoHideTimeout);
+        document.removeEventListener('click', hideOnClick, true);
       }
     };
     
+    // Add delay to prevent immediate closure from the click that opened this
     setTimeout(() => {
-      document.addEventListener('click', hideOnClick);
+      document.addEventListener('click', hideOnClick, true);
     }, 100);
   },
 

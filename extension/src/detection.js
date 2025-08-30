@@ -69,15 +69,25 @@ const DetectionEngine = {
           finalLabel = 'IP_PRIVATE';
         }
 
+        // Use smart categorizer to analyze potential ambiguity
+        const categorization = SmartCategorizer.analyzeDetection(matchedText, finalLabel, 0.95);
+
         const span = {
           start: match.index,
           end: match.index + matchedText.length,
           label: finalLabel,
-          confidence: 0.95,
-          text: matchedText
+          confidence: categorization.confidence,
+          text: matchedText,
+          possibleCategories: categorization.possibleCategories,
+          needsUserInput: categorization.needsUserInput,
+          reasoning: categorization.reasoning,
+          suggestions: SmartCategorizer.createCategorySuggestions(categorization)
         };
         
         console.log(`📍 Adding span for ${finalLabel}:`, span);
+        if (categorization.needsUserInput) {
+          console.log(`🤔 User input needed for ambiguous detection:`, categorization.possibleCategories);
+        }
         detectedSpans.push(span);
         
         // Prevent infinite loops on zero-width matches
@@ -97,10 +107,14 @@ const DetectionEngine = {
 
   /**
    * Analyze text using local ONNX model for NAME and ADDRESS detection
+   * @param {string} text - Text to analyze
+   * @param {Array} existingSpans - Already detected spans to avoid overlapping
    */
-  analyzeWithONNX: async (text) => {
+  analyzeWithONNX: async (text, existingSpans = []) => {
     try {
       console.log('🤖 Starting ONNX analysis for:', text);
+      console.log('🎯 Existing spans to avoid:', existingSpans.map(s => ({ text: s.text, label: s.label, start: s.start, end: s.end })));
+      
       const prefs = getUserPreferences();
       
       // Check if NAME or ADDRESS categories are enabled
@@ -112,23 +126,38 @@ const DetectionEngine = {
         return [];
       }
       
-      // Check if regex can already detect names/addresses
-      const regexCheck = DetectionEngine.hasRegexNameOrAddressPattern(text);
+      // Check if existing regex spans already cover NAME/ADDRESS detection
+      const hasNameSpan = existingSpans.some(span => span.label === 'NAME');
+      const hasAddressSpan = existingSpans.some(span => span.label === 'ADDRESS');
       
-      // Skip ONNX if regex can detect the patterns
-      if ((regexCheck.hasNamePattern && needsNameDetection) || 
-          (regexCheck.hasAddressPattern && needsAddressDetection)) {
-        console.log('⚡ Skipping ONNX - regex patterns detected. Using fallback instead.');
-        
-        // Use fallback detection but apply confidence threshold
-        const fallbackSpans = await ONNXInference.fallbackDetection(text);
-        return fallbackSpans.filter(span => span.confidence >= CONFIG.ONNX_CONFIDENCE_THRESHOLD);
+      if ((hasNameSpan && needsNameDetection) && (hasAddressSpan && needsAddressDetection)) {
+        console.log('⚡ Skipping ONNX - both NAME and ADDRESS already detected by regex');
+        return [];
+      }
+      
+      if (hasNameSpan && needsNameDetection && !needsAddressDetection) {
+        console.log('⚡ Skipping ONNX - NAME already detected by regex and ADDRESS disabled');
+        return [];
+      }
+      
+      if (hasAddressSpan && needsAddressDetection && !needsNameDetection) {
+        console.log('⚡ Skipping ONNX - ADDRESS already detected by regex and NAME disabled');
+        return [];
+      }
+      
+      // Quick check: if text only contains obvious non-NAME/ADDRESS patterns, skip ONNX
+      const isOnlyObviousPatterns = text.length < 50 && 
+        (/@/.test(text) || /\d{4}-?\d{4}-?\d{4}-?\d{4}/.test(text) || /^\+?\d+$/.test(text.trim()));
+      
+      if (isOnlyObviousPatterns && existingSpans.length > 0) {
+        console.log('⚡ Skipping ONNX - text contains only obvious non-NAME/ADDRESS patterns');
+        return [];
       }
       
       // Run ONNX inference
       const spans = await ONNXInference.predict(text);
       
-      // Apply confidence threshold and filter based on user preferences
+      // Apply confidence threshold, filter based on user preferences, and add smart categorization
       const filteredSpans = spans.filter(span => {
         const meetsConfidence = span.confidence >= CONFIG.ONNX_CONFIDENCE_THRESHOLD;
         const isEnabled = (span.label === 'NAME' && needsNameDetection) ||
@@ -139,13 +168,43 @@ const DetectionEngine = {
         }
         
         return meetsConfidence && isEnabled;
+      }).filter(span => {
+        // Remove spans that overlap with existing regex detections
+        const isOverlapping = existingSpans.some(existingSpan => {
+          return DetectionEngine.spansOverlap(span, existingSpan);
+        });
+        
+        if (isOverlapping) {
+          console.log(`🚫 Removing overlapping ONNX span: "${span.text}" (${span.start}-${span.end}) overlaps with regex detection`);
+        }
+        
+        return !isOverlapping;
+      }).map(span => {
+        // Apply smart categorization to ONNX results
+        const categorization = SmartCategorizer.analyzeDetection(span.text, span.label, span.confidence);
+        
+        return {
+          ...span,
+          confidence: categorization.confidence,
+          possibleCategories: categorization.possibleCategories,
+          needsUserInput: categorization.needsUserInput,
+          reasoning: categorization.reasoning + ' (AI detected)',
+          suggestions: SmartCategorizer.createCategorySuggestions(categorization)
+        };
       });
       
-      console.log('🎯 ONNX analysis results (>60% confidence):', filteredSpans);
+      console.log('🎯 ONNX analysis results (>60% confidence, non-overlapping):', filteredSpans);
       return filteredSpans;
     } catch (error) {
       console.error('❌ ONNX analysis failed:', error);
       return [];
     }
+  },
+
+  /**
+   * Check if two spans overlap
+   */
+  spansOverlap: (span1, span2) => {
+    return !(span1.end <= span2.start || span2.end <= span1.start);
   },
 };

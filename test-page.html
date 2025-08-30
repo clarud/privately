@@ -295,23 +295,75 @@ MIIEpAIBAAKCAQEA1234567890abcdefghijklmnopqrstuvwxyz
 
     <!-- Mixed Data Testing -->
     <div class="test-section category">
-        <h3>🔀 Mixed Sensitive Data</h3>
-        <textarea placeholder="Test multiple types together" rows="8">Contact info: john.doe@company.com, +65 9123 4567, jane.smith@corporate.org
-Financial: 4242 4242 4242 4242, 5555555555554444, GB82WEST12345698765432, DE89370400440532013000
-Identity: S1234567A, T9876543B, 12345678A, 123456789B
-Network: https://admin.example.com, https://secret-dashboard.internal.com, 192.168.1.100, 10.0.0.1
-Security: Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.payload.signature, api_key="sk_live_1234567890abcdef"
-Names: John Smith, Mary Johnson, David Wilson, Sarah Chen
-Addresses: 123 Main Street, Singapore 123456, 456 Orchard Road, Singapore 567890, 789 Marina Bay, Singapore 098765
-Crypto: 550e8400-e29b-41d4-a716-446655440000, AKIAIOSFODNN7EXAMPLE
-Files: /home/user/documents/secret.txt, C:\Users\Admin\Private\confidential.doc
-Secrets: password="MySecretPass123", token: bearer_abc123xyz789, secret_key="ultra_secure_key_456"
-Keys: -----BEGIN RSA PRIVATE KEY-----
-MIIEpAIBAAKCAQEA1234567890abcdefghijklmnop
------END RSA PRIVATE KEY-----
-Cookies: Set-Cookie: session_id=abc123def456; HttpOnly; Secure, Set-Cookie: auth_token=xyz789
-Base64: VGhpcyBpcyBhIHZlcnkgbG9uZyBiYXNlNjQgZW5jb2RlZCBzdHJpbmcgdGhhdCBzaG91bGQgYmUgZGV0ZWN0ZWQ=
-Hex: deadbeefcafebabe1234567890abcdef9876543210fedcba0987654321abcdef12345678</textarea>
+        <h3>🔀 Realistic AI Prompt - Customer Support</h3>
+        <textarea placeholder="Test realistic AI scenario" rows="12">Hi Claude, I need help writing a professional email response to an angry customer. Here are the details:
+
+Customer: John Smith (email: john.smith@techcorp.com, phone: +65 9234 5678)
+Issue: Failed payment with card 4532 1234 5678 9012 
+Order ID: ORD-550e8400-e29b-41d4-a716-446655440000
+Customer NRIC: S1234567A for verification
+
+The customer lives at 123 Marina Bay Street, Singapore 018989 and has been trying to reach our support team. His colleague Mary Johnson (mary.j@techcorp.com) also contacted us about this issue.
+
+Our internal system shows:
+- API Key: AKIAIOSFODNN7EXAMPLE (used for payment processing)
+- Session Token: eyJhbGciOiJIUzI1NiJ9.payload.signature
+- Database record: SELECT * FROM customers WHERE nric='S1234567A'
+- Server IP: 192.168.1.100 (internal payment gateway)
+- Log file: /var/log/payments/failed_transactions.log
+
+Additional context:
+- Previous successful payment: 4111 1111 1111 1111
+- Bank account: GB82WEST12345698765432
+- Authorization header: Authorization: Bearer abc123def456xyz789
+
+Please help me draft a professional apology email that addresses the payment failure and provides next steps. The email should be empathetic but not reveal any internal technical details.</textarea>
+    </div>
+
+    <!-- AI Chat Scenario -->
+    <div class="test-section category">
+        <h3>🤖 Realistic AI Chat - Personal Assistant</h3>
+        <textarea placeholder="Test personal assistant scenario" rows="10">Hey ChatGPT! I'm planning a business trip and need your help organizing everything. Here are my details:
+
+Personal Info:
+- Name: David Wilson Chen
+- Email: david.wilson@mycompany.org
+- Phone: +65 8765 4321
+- NRIC: T9876543B
+- Address: 456 Orchard Road, Singapore 567890
+
+Travel Details:
+- Credit Card: 5555 5555 5555 4444 (for bookings)
+- IBAN: DE89370400440532013000 (company account)
+- Corporate card: 4000 0000 0000 0002
+
+I need you to help me:
+1. Draft emails to clients (including sarah.miller@clientco.com and mike.brown@partners.net)
+2. Create expense reports with receipts
+3. Plan meetings with colleagues John Anderson and Lisa Thompson
+
+My assistant's contact: jennifer.lee@mycompany.org, phone +65 6123 4567
+
+Can you help create a professional itinerary and draft the necessary communications?</textarea>
+    </div>
+
+    <!-- Data Analysis Prompt -->
+    <div class="test-section category">
+        <h3>📊 Realistic AI Prompt - Data Analysis</h3>
+        <textarea placeholder="Test data analysis scenario" rows="8">I'm working on a customer analysis project and need help with Python code. Here's my sample dataset:
+
+customers = [
+    {"name": "Alice Johnson", "email": "alice.j@corp.com", "phone": "+65 9111 2222", "nric": "S1111111A", "card": "4242 4242 4242 4242"},
+    {"name": "Bob Smith Wilson", "email": "bob.smith@company.net", "phone": "+65 8333 4444", "nric": "T2222222B", "card": "5555 5555 5555 4444"},
+    {"name": "Carol Lee", "email": "carol.lee@business.org", "phone": "+65 9555 6666", "nric": "F3333333C", "address": "789 Raffles Place, Singapore 048621"}
+]
+
+Database connection:
+- Host: 10.0.0.1
+- Auth token: eyJhbGciOiJIUzI1NiJ9.dGVzdA.signature
+- API key: AKIAI44QH8DHBEXAMPLE
+
+Can you help me write pandas code to analyze customer spending patterns while ensuring data privacy?</textarea>
     </div>
 
     <div style="margin-top: 40px; padding: 20px; background-color: #f0f8ff; border-radius: 5px;">

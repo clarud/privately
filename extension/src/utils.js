@@ -29,8 +29,29 @@ const UtilityHelpers = {
    */
   getFakeData: (label) => {
     const prefs = getUserPreferences();
-    const replacement = (prefs.fakeData && prefs.fakeData[label]) || FAKE_DATA_MAP[label] || "REDACTED";
-    console.log(`🔄 Replacing ${label} with:`, replacement);
+    console.log('🔍 Getting fake data for label:', label);
+    console.log('🔍 User preferences:', prefs);
+    console.log('🔍 User fakeData:', prefs.fakeData);
+    console.log('🔍 Available in FAKE_DATA_MAP:', FAKE_DATA_MAP[label]);
+    
+    let replacement;
+    
+    // Try user's custom fake data first
+    if (prefs.fakeData && prefs.fakeData[label]) {
+      replacement = prefs.fakeData[label];
+      console.log(`🎯 Using user custom fake data for ${label}:`, replacement);
+    }
+    // Fall back to default fake data
+    else if (FAKE_DATA_MAP[label]) {
+      replacement = FAKE_DATA_MAP[label];
+      console.log(`🔄 Using default fake data for ${label}:`, replacement);
+    }
+    // Final fallback
+    else {
+      replacement = "REDACTED";
+      console.log(`⚠️ No fake data found for ${label}, using fallback:`, replacement);
+    }
+    
     return replacement;
   },
 

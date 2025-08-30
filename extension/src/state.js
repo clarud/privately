@@ -18,10 +18,6 @@ function initializePreferences() {
         ...DEFAULT_PREFERENCES.categories, 
         ...(pg_prefs.categories || {}) 
       },
-      allowlist: { 
-        ...DEFAULT_PREFERENCES.allowlist, 
-        ...(pg_prefs.allowlist || {}) 
-      },
       fakeData: { 
         ...DEFAULT_PREFERENCES.fakeData, 
         ...(pg_prefs.fakeData || {}) 
@@ -40,10 +36,6 @@ function initializePreferences() {
         categories: { 
           ...DEFAULT_PREFERENCES.categories, 
           ...(newPrefs.categories || {}) 
-        },
-        allowlist: { 
-          ...DEFAULT_PREFERENCES.allowlist, 
-          ...(newPrefs.allowlist || {}) 
         },
         fakeData: { 
           ...DEFAULT_PREFERENCES.fakeData, 

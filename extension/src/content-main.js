@@ -7,26 +7,26 @@
  * Main input handler with debouncing
  */
 const handleInput = UtilityHelpers.debounce(async (element) => {
-  console.log('🔍 Analyzing text:', element.isContentEditable ? element.innerText : element.value);
-  
-  // Check if privacy detection is enabled
-  const prefs = getUserPreferences();
-  if (!prefs.enabled) {
-    console.log('❌ Detection disabled');
-    return;
-  }
-  
-  // Check if current site is in allowlist
-  if (AllowlistManager.isCurrentSiteAllowed()) {
-    console.log('❌ Site allowlisted');
-    return;
-  }
+  try {
+    if (!element) {
+      console.warn('⚠️ handleInput called with null element');
+      return;
+    }
+    
+    console.log('🔍 Analyzing text:', element.isContentEditable ? element.innerText : element.value);
+    
+    // Check if privacy detection is enabled
+    const prefs = getUserPreferences();
+    if (!prefs.enabled) {
+      console.log('❌ Detection disabled');
+      return;
+    }
 
-  // Get text content from element
-  const text = element.isContentEditable ? element.innerText : element.value;
+    // Get text content from element
+    const text = element.isContentEditable ? element.innerText : element.value;
   
-  // Clear highlights if no text content
-  if (!text?.trim()) {
+    // Clear highlights if no text content
+    if (!text?.trim()) {
     if (element.isContentEditable) {
       DOMHelpers.clearHighlights(element);
     }
@@ -38,32 +38,48 @@ const handleInput = UtilityHelpers.debounce(async (element) => {
   const localSpans = DetectionEngine.detectSensitiveData(text);
 
   // Perform ONNX model analysis for NAME and ADDRESS detection
-  const onnxSpans = await DetectionEngine.analyzeWithONNX(text);
+  // Pass existing regex spans to avoid overlapping detections
+  const onnxSpans = await DetectionEngine.analyzeWithONNX(text, localSpans);
   
-  // Combine local and ONNX results
+  // Combine local and ONNX results (ONNX should already exclude overlapping regions)
   const allDetectedSpans = [...localSpans, ...onnxSpans];
+  
+  // Filter out content that has already been processed (replaced/removed)
+  const filteredSpans = ReplacementTracker.filterProcessedSpans(element, allDetectedSpans);
   
   console.log('🔍 Combined detection results:', {
     local: localSpans.length,
     onnx: onnxSpans.length,
-    total: allDetectedSpans.length
+    total: allDetectedSpans.length,
+    afterFiltering: filteredSpans.length,
+    localSpans: localSpans.map(s => ({ text: s.text, label: s.label, start: s.start, end: s.end })),
+    onnxSpans: onnxSpans.map(s => ({ text: s.text, label: s.label, start: s.start, end: s.end })),
+    filteredOut: allDetectedSpans.length - filteredSpans.length
   });
 
   // Apply visual highlights for contenteditable elements
   if (element.isContentEditable) {
     DOMHelpers.clearHighlights(element);
-    if (allDetectedSpans.length > 0) {
-      DOMHelpers.highlightContentEditable(element, allDetectedSpans);
+    if (filteredSpans.length > 0) {
+      DOMHelpers.highlightContentEditable(element, filteredSpans);
     }
   }
 
   // Show tooltip if sensitive data detected
-  if (allDetectedSpans.length > 0) {
-    console.log('🏷️ Showing tooltip for detections:', allDetectedSpans.map(s => s.label));
-    TooltipManager.attachTooltip(element, allDetectedSpans, false); // Using local detection only
+  if (filteredSpans.length > 0) {
+    console.log('🏷️ Showing tooltip for detections:', filteredSpans.map(s => s.label));
+    TooltipManager.attachTooltip(element, filteredSpans, false); // Using local detection only
   } else {
-    console.log('🚫 No detections');
+    console.log('🚫 No detections (after filtering processed content)');
     TooltipManager.removeTooltip(element);
+  }
+  
+  } catch (error) {
+    console.error('❌ Error in handleInput:', error);
+    // Clean up any tooltips on error
+    if (typeof TooltipManager !== 'undefined' && TooltipManager.removeTooltip) {
+      TooltipManager.removeTooltip(element);
+    }
   }
 }, CONFIG.DEBOUNCE_MS);
 
@@ -85,6 +101,21 @@ function initializeEventListeners() {
     
     console.log('✅ Element matches! Setting up listeners...');
 
+    // Close any existing tooltips when focusing on a new field
+    if (TooltipManager.currentElement && TooltipManager.currentElement !== element) {
+      console.log('🔄 Switching to new field, closing previous tooltip');
+      
+      // Store reference before removing tooltips (which sets currentElement to null)
+      const previousElement = TooltipManager.currentElement;
+      
+      TooltipManager.removeAllTooltips();
+      
+      // Clear highlights from previous element if it was contenteditable
+      if (previousElement && previousElement.isContentEditable) {
+        DOMHelpers.clearHighlights(previousElement);
+      }
+    }
+
     // Add input listener for real-time detection
     element.addEventListener('input', () => {
       console.log('📝 Input event triggered on:', element);
@@ -96,9 +127,11 @@ function initializeEventListeners() {
       console.log('👋 Blur event on:', element);
       // Add a small delay to allow tooltip clicks to register first
       setTimeout(() => {
-        TooltipManager.removeTooltip(element);
-        if (element.isContentEditable) {
-          DOMHelpers.clearHighlights(element);
+        if (element && typeof TooltipManager !== 'undefined') {
+          TooltipManager.removeTooltip(element);
+          if (element.isContentEditable) {
+            DOMHelpers.clearHighlights(element);
+          }
         }
       }, 150);
     }, { capture: true });
@@ -135,9 +168,39 @@ function initializeExtension() {
   }, 1000);
 }
 
+/**
+ * Cleanup function to remove tooltips and event listeners
+ */
+function cleanup() {
+  console.log('🧹 Cleaning up Privately extension...');
+  
+  // Remove all tooltips
+  if (typeof TooltipManager !== 'undefined' && TooltipManager.removeAllTooltips) {
+    TooltipManager.removeAllTooltips();
+  }
+  
+  // Remove all highlights
+  document.querySelectorAll('.pg-underline').forEach(highlight => {
+    const parent = highlight.parentNode;
+    if (parent) {
+      parent.replaceChild(document.createTextNode(highlight.textContent), highlight);
+      parent.normalize();
+    }
+  });
+  
+  // Remove global click handler
+  if (typeof TooltipManager !== 'undefined' && TooltipManager.globalClickHandler) {
+    document.removeEventListener('click', TooltipManager.globalClickHandler, true);
+  }
+}
+
 // Start the extension when DOM is ready
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initializeExtension);
 } else {
   initializeExtension();
 }
+
+// Cleanup when page is unloaded
+window.addEventListener('beforeunload', cleanup);
+window.addEventListener('unload', cleanup);
