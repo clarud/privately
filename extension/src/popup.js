@@ -7,7 +7,7 @@ const defaults = {
     NRIC: true, UEN: true, POSTAL_SG: true, CARD: true, IBAN: true,
     JWT: true, AWS_KEY: true, SECRET: true, PRIVATE_KEY: true,
     AUTH_HEADER: true, SET_COOKIE: true, FILEPATH: true, UUID: true,
-    BASE64_LONG: true, HEX_LONG: true, NAME: true, ADDRESS: true, ORG: true
+    BASE64_LONG: true, HEX_LONG: true, NAME: true, ADDRESS: true
   },
   allowlist: {},
   fakeData: {}
@@ -19,7 +19,7 @@ const labelColors = {
   NRIC: "amber", UEN: "amber", POSTAL_SG: "amber", CARD: "red", IBAN: "red",
   JWT: "orange", AWS_KEY: "orange", SECRET: "red", PRIVATE_KEY: "red",
   AUTH_HEADER: "purple", SET_COOKIE: "purple", FILEPATH: "gray", UUID: "gray",
-  BASE64_LONG: "indigo", HEX_LONG: "indigo", NAME: "teal", ADDRESS: "teal", ORG: "teal"
+  BASE64_LONG: "indigo", HEX_LONG: "indigo", NAME: "teal", ADDRESS: "teal"
 };
 
 // Category groupings for better organization
@@ -28,7 +28,7 @@ const categoryGroups = {
   "Financial & IDs": ["CARD", "IBAN", "NRIC", "UEN"],
   "Security & Keys": ["SECRET", "JWT", "AWS_KEY", "PRIVATE_KEY"],
   "Technical": ["URL", "IP", "IP_PRIVATE", "UUID", "BASE64_LONG", "HEX_LONG"],
-  "System & Headers": ["AUTH_HEADER", "SET_COOKIE", "FILEPATH", "POSTAL_SG", "ORG"]
+  "System & Headers": ["AUTH_HEADER", "SET_COOKIE", "FILEPATH", "POSTAL_SG"]
 };
 
 function renderCounts(pg_counts, userPreferences){

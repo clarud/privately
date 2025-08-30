@@ -9,7 +9,10 @@ const CONFIG = {
   MIN_ENTROPY_THRESHOLD: 3.5,
   JWT_ENTROPY_THRESHOLD: 3.8,
   SECRET_ENTROPY_THRESHOLD: 3.6,
-  TOOLTIP_POSITION: 'auto' // Options: 'right', 'left', 'top', 'bottom', 'auto'
+  TOOLTIP_POSITION: 'auto', // Options: 'right', 'left', 'top', 'bottom', 'auto'
+  ONNX_MODEL_PATH: '/assets/model.onnx',
+  ONNX_MODEL_LABELS: ['O', 'B-PER', 'I-PER', 'B-ADDR', 'I-ADDR'], // Common NER labels
+  ONNX_CONFIDENCE_THRESHOLD: 0.6 // Only accept predictions >60% confidence
 };
 
 // Detection patterns for various sensitive data types
@@ -105,8 +108,7 @@ const FAKE_DATA_MAP = {
   BASE64_LONG: "ZmFrZV9iYXNlNjRfZGF0YV9leGFtcGxl",
   HEX_LONG: "deadbeefcafebabe1234567890abcdef",
   NAME: "Jordan Avery",
-  ADDRESS: "221B Baker Street, London",
-  ORG: "Example Corporation Ltd"
+  ADDRESS: "221B Baker Street, London"
 };
 
 // Default user preferences
@@ -118,7 +120,7 @@ const DEFAULT_PREFERENCES = {
     NRIC: true, UEN: true, POSTAL_SG: true, CARD: true, IBAN: true,
     JWT: true, AWS_KEY: true, SECRET: true, PRIVATE_KEY: true,
     AUTH_HEADER: true, SET_COOKIE: true, FILEPATH: true, UUID: true,
-    BASE64_LONG: true, HEX_LONG: true, NAME: true, ADDRESS: true, ORG: true
+    BASE64_LONG: true, HEX_LONG: true, NAME: true, ADDRESS: true
   },
   allowlist: {},
   fakeData: { ...FAKE_DATA_MAP }

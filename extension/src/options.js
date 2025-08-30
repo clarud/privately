@@ -26,8 +26,7 @@ const ALL_DETECTION_CATEGORIES = {
   BASE64_LONG: true,
   HEX_LONG: true,
   NAME: true,
-  ADDRESS: true,
-  ORG: true
+  ADDRESS: true
 };
 
 // Default fake data map for options page
@@ -53,8 +52,7 @@ const DEFAULT_FAKE_DATA = {
   BASE64_LONG: "ZmFrZV9iYXNlNjRfZGF0YV9leGFtcGxl",
   HEX_LONG: "deadbeefcafebabe1234567890abcdef",
   NAME: "Jordan Avery",
-  ADDRESS: "221B Baker Street, London",
-  ORG: "Example Corporation Ltd"
+  ADDRESS: "221B Baker Street, London"
 };
 
 // Category descriptions for better UX
@@ -80,8 +78,7 @@ const CATEGORY_DESCRIPTIONS = {
   BASE64_LONG: "Base64 encoded data",
   HEX_LONG: "Hexadecimal strings",
   NAME: "Personal names (AI detected)",
-  ADDRESS: "Addresses (AI detected)",
-  ORG: "Organizations (AI detected)"
+  ADDRESS: "Addresses (AI detected)"
 };
 
 // Default preferences with all available categories

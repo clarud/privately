@@ -266,6 +266,31 @@ MIIEpAIBAAKCAQEA1234567890abcdefghijklmnopqrstuvwxyz
         <h3>✏️ ContentEditable Field</h3>
         <div contenteditable="true">john@example.com, +65 9123 4567, 4242 4242 4242 4242</div>
         <div contenteditable="true">https://admin.secret.com, S1234567A, AKIAIOSFODNN7EXAMPLE</div>
+        <div contenteditable="true">John Smith lives at 123 Main Street and works with Mary Johnson</div>
+    </div>
+
+    <!-- NAME Testing -->
+    <div class="test-section category">
+        <h3>👤 Names (ONNX Model)</h3>
+        <input type="text" value="John Smith">
+        <input type="text" value="Mary Johnson Wilson">
+        <input type="text" value="David Chen">
+        <input type="text" value="Sarah Miller Brown">
+        <div class="test-data">
+            Test names: John Smith, Mary Johnson Wilson, David Chen, Sarah Miller Brown
+        </div>
+    </div>
+
+    <!-- ADDRESS Testing -->
+    <div class="test-section category">
+        <h3>🏠 Addresses (ONNX Model)</h3>
+        <input type="text" value="123 Main Street">
+        <input type="text" value="456 Orchard Road">
+        <input type="text" value="789 Marina Boulevard">
+        <input type="text" value="321 Commonwealth Avenue">
+        <div class="test-data">
+            Test addresses: 123 Main Street, 456 Orchard Road, 789 Marina Boulevard, 321 Commonwealth Avenue
+        </div>
     </div>
 
     <!-- Mixed Data Testing -->
@@ -276,6 +301,8 @@ Financial: 4242 4242 4242 4242, 5555555555554444, GB82WEST12345698765432, DE8937
 Identity: S1234567A, T9876543B, 12345678A, 123456789B
 Network: https://admin.example.com, https://secret-dashboard.internal.com, 192.168.1.100, 10.0.0.1
 Security: Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.payload.signature, api_key="sk_live_1234567890abcdef"
+Names: John Smith, Mary Johnson, David Wilson, Sarah Chen
+Addresses: 123 Main Street, Singapore 123456, 456 Orchard Road, Singapore 567890, 789 Marina Bay, Singapore 098765
 Crypto: 550e8400-e29b-41d4-a716-446655440000, AKIAIOSFODNN7EXAMPLE
 Files: /home/user/documents/secret.txt, C:\Users\Admin\Private\confidential.doc
 Secrets: password="MySecretPass123", token: bearer_abc123xyz789, secret_key="ultra_secure_key_456"

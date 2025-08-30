@@ -37,11 +37,17 @@ const handleInput = UtilityHelpers.debounce(async (element) => {
   // Perform local detection
   const localSpans = DetectionEngine.detectSensitiveData(text);
 
-  // TODO: Re-enable backend analysis when AI model is connected
-  // const backendSpans = await DetectionEngine.analyzeWithBackend(text);
+  // Perform ONNX model analysis for NAME and ADDRESS detection
+  const onnxSpans = await DetectionEngine.analyzeWithONNX(text);
   
-  // Use only local detection for now
-  const allDetectedSpans = localSpans;
+  // Combine local and ONNX results
+  const allDetectedSpans = [...localSpans, ...onnxSpans];
+  
+  console.log('🔍 Combined detection results:', {
+    local: localSpans.length,
+    onnx: onnxSpans.length,
+    total: allDetectedSpans.length
+  });
 
   // Apply visual highlights for contenteditable elements
   if (element.isContentEditable) {
