@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privately Extension Test Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test-section h3 {
+            color: #333;
+            margin-top: 0;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+        .test-data {
+            background-color: #f5f5f5;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+        [contenteditable] {
+            border: 1px solid #ccc;
+            padding: 10px;
+            min-height: 100px;
+            background-color: #fff;
+        }
+        .category {
+            background-color: #e8f4fd;
+            border-left: 4px solid #2196F3;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔒 Privately Extension Test Page</h1>
+    <p>This page contains various types of sensitive data to test the Privately extension detection and replacement functionality.</p>
+
+    <!-- Email Testing -->
+    <div class="test-section category">
+        <h3>📧 Email Addresses</h3>
+        <input type="email" value="john.doe@company.com">
+        <input type="email" value="jane_doe123@gmail.com">
+        <input type="email" value="support@my-company.co.uk">
+        <div class="test-data">
+            Test emails: alex.smith@example.org, jane_doe123@gmail.com, support@my-company.co.uk
+        </div>
+    </div>
+
+    <!-- Phone Testing -->
+    <div class="test-section category">
+        <h3>📱 Singapore Phone Numbers</h3>
+        <input type="tel" value="+65 9123 4567">
+        <input type="tel" value="65-8234-5678">
+        <input type="tel" value="91234567">
+        <input type="tel" value="+65 3123 4567">
+        <div class="test-data">
+            Test phones: +65 9123 4567, 65-8234-5678, 91234567, +65 3123 4567
+        </div>
+    </div>
+
+    <!-- URL Testing -->
+    <div class="test-section category">
+        <h3>🌐 URLs</h3>
+        <input type="url" value="https://admin.example.com/secret">
+        <input type="url" value="http://localhost:3000/api/users">
+        <input type="url" value="https://my-private-site.com">
+        <div class="test-data">
+            Test URLs: https://admin.example.com/secret, http://localhost:3000/api/users, https://my-private-site.com
+        </div>
+    </div>
+
+    <!-- IP Address Testing -->
+    <div class="test-section category">
+        <h3>🌍 IP Addresses</h3>
+        <input type="text" value="192.168.1.100">
+        <input type="text" value="10.0.0.1">
+        <input type="text" value="172.16.0.5">
+        <input type="text" value="203.116.43.22">
+        <div class="test-data">
+            Test IPs: 192.168.1.100, 10.0.0.1, 172.16.0.5, 203.116.43.22, 2001:db8::1
+        </div>
+    </div>
+
+    <!-- NRIC Testing -->
+    <div class="test-section category">
+        <h3>🆔 Singapore NRIC</h3>
+        <input type="text" value="S1234567A">
+        <input type="text" value="T9876543B">
+        <input type="text" value="F5555555C">
+        <input type="text" value="G1111111D">
+        <div class="test-data">
+            Test NRICs: S1234567A, T9876543B, F5555555C, G1111111D, M2222222E
+        </div>
+    </div>
+
+    <!-- UEN Testing -->
+    <div class="test-section category">
+        <h3>🏢 Singapore UEN</h3>
+        <input type="text" value="12345678A">
+        <input type="text" value="123456789B">
+        <input type="text" value="T12AB3456C">
+        <input type="text" value="S34CD5678E">
+        <div class="test-data">
+            Test UENs: 12345678A, 123456789B, T12AB3456C, S34CD5678E, R56EF7890F
+        </div>
+    </div>
+
+    <!-- Postal Code Testing -->
+    <div class="test-section category">
+        <h3>📮 Singapore Postal Codes</h3>
+        <input type="text" value="123456">
+        <input type="text" value="567890">
+        <input type="text" value="238900">
+        <input type="text" value="018989">
+        <div class="test-data">
+            Test postal codes: 123456, 567890, 238900, 018989, 654321
+        </div>
+    </div>
+
+    <!-- Credit Card Testing -->
+    <div class="test-section category">
+        <h3>💳 Credit Card Numbers</h3>
+        <input type="text" value="4242 4242 4242 4242">
+        <input type="text" value="5555555555554444">
+        <input type="text" value="4111-1111-1111-1111">
+        <input type="text" value="378282246310005">
+        <div class="test-data">
+            Test cards: 4242 4242 4242 4242, 5555555555554444, 4111-1111-1111-1111, 378282246310005
+        </div>
+    </div>
+
+    <!-- IBAN Testing -->
+    <div class="test-section category">
+        <h3>🏦 IBAN Numbers</h3>
+        <input type="text" value="GB82WEST12345698765432">
+        <input type="text" value="DE89370400440532013000">
+        <input type="text" value="FR1420041010050500013M02606">
+        <div class="test-data">
+            Test IBANs: GB82WEST12345698765432, DE89370400440532013000, FR1420041010050500013M02606
+        </div>
+    </div>
+
+    <!-- JWT Testing -->
+    <div class="test-section category">
+        <h3>🔑 JWT Tokens</h3>
+        <input type="text" value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.signature" style="font-family: monospace; font-size: 12px;">
+        <div class="test-data">
+            Test JWT: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+        </div>
+    </div>
+
+    <!-- AWS Key Testing -->
+    <div class="test-section category">
+        <h3>☁️ AWS Access Keys</h3>
+        <input type="text" value="AKIAIOSFODNN7EXAMPLE">
+        <input type="text" value="AKIAI44QH8DHBEXAMPLE">
+        <input type="text" value="AKIA1234567890ABCDEF">
+        <div class="test-data">
+            Test AWS keys: AKIAIOSFODNN7EXAMPLE, AKIAI44QH8DHBEXAMPLE, AKIA1234567890ABCDEF
+        </div>
+    </div>
+
+    <!-- Secret Testing -->
+    <div class="test-section category">
+        <h3>🔐 Secrets & API Keys</h3>
+        <input type="text" value='api_key="sk_live_1234567890abcdef"'>
+        <input type="text" value="password=MySecretPass123">
+        <input type="text" value="token: bearer_abc123xyz789">
+        <div class="test-data">
+            Test secrets: api_key="sk_live_1234567890abcdef", password=MySecretPass123, token: bearer_abc123xyz789
+        </div>
+    </div>
+
+    <!-- Private Key Testing -->
+    <div class="test-section category">
+        <h3>🗝️ Private Keys</h3>
+        <textarea>-----BEGIN RSA PRIVATE KEY-----
+MIIEpAIBAAKCAQEA1234567890abcdefghijklmnopqrstuvwxyz
+-----END RSA PRIVATE KEY-----</textarea>
+        <div class="test-data">
+            Test private key:
+            -----BEGIN RSA PRIVATE KEY-----
+            MIIEpAIBAAKCAQEA1234567890abcdefghijklmnopqrstuvwxyz
+            -----END RSA PRIVATE KEY-----
+        </div>
+    </div>
+
+    <!-- Auth Header Testing -->
+    <div class="test-section category">
+        <h3>🔒 Authorization Headers</h3>
+        <input type="text" value="Authorization: Bearer eyJhbGci">
+        <input type="text" value="Authorization: Basic dXNlcjpwYXNz">
+        <div class="test-data">
+            Test headers: Authorization: Bearer eyJhbGci, Authorization: Basic dXNlcjpwYXNz
+        </div>
+    </div>
+
+    <!-- Cookie Testing -->
+    <div class="test-section category">
+        <h3>🍪 Set-Cookie Headers</h3>
+        <input type="text" value="Set-Cookie: sessionid=abcd1234; HttpOnly">
+        <input type="text" value="Set-Cookie: auth_token=xyz789">
+        <div class="test-data">
+            Test cookies: Set-Cookie: sessionid=abcd1234; HttpOnly, Set-Cookie: auth_token=xyz789
+        </div>
+    </div>
+
+    <!-- File Path Testing -->
+    <div class="test-section category">
+        <h3>📁 File Paths</h3>
+        <input type="text" value="/home/user/documents/secret.txt">
+        <input type="text" value="C:\Users\John\Documents\private.doc">
+        <input type="text" value="/var/log/sensitive.log">
+        <div class="test-data">
+            Test paths: /home/user/documents/secret.txt, C:\Users\John\Documents\private.doc, /var/log/sensitive.log
+        </div>
+    </div>
+
+    <!-- UUID Testing -->
+    <div class="test-section category">
+        <h3>🆔 UUIDs</h3>
+        <input type="text" value="550e8400-e29b-41d4-a716-446655440000">
+        <input type="text" value="6ba7b810-9dad-11d1-80b4-00c04fd430c8">
+        <div class="test-data">
+            Test UUIDs: 550e8400-e29b-41d4-a716-446655440000, 6ba7b810-9dad-11d1-80b4-00c04fd430c8
+        </div>
+    </div>
+
+    <!-- Base64 Testing -->
+    <div class="test-section category">
+        <h3>📋 Base64 Long Strings</h3>
+        <input type="text" value="VGhpcyBpcyBhIHZlcnkgbG9uZyBiYXNlNjQgZW5jb2RlZCBzdHJpbmcgdGhhdCBzaG91bGQgYmUgZGV0ZWN0ZWQ=" style="font-family: monospace; font-size: 11px;">
+        <div class="test-data">
+            Test base64: VGhpcyBpcyBhIHZlcnkgbG9uZyBiYXNlNjQgZW5jb2RlZCBzdHJpbmcgdGhhdCBzaG91bGQgYmUgZGV0ZWN0ZWQ=
+        </div>
+    </div>
+
+    <!-- Hex Testing -->
+    <div class="test-section category">
+        <h3>🔢 Long Hex Strings</h3>
+        <input type="text" value="deadbeefcafebabe1234567890abcdef9876543210fedcba0987654321abcdef12345678" style="font-family: monospace; font-size: 11px;">
+        <div class="test-data">
+            Test hex: deadbeefcafebabe1234567890abcdef9876543210fedcba0987654321abcdef12345678
+        </div>
+    </div>
+
+    <!-- ContentEditable Testing -->
+    <div class="test-section category">
+        <h3>✏️ ContentEditable Field</h3>
+        <div contenteditable="true">john@example.com, +65 9123 4567, 4242 4242 4242 4242</div>
+        <div contenteditable="true">https://admin.secret.com, S1234567A, AKIAIOSFODNN7EXAMPLE</div>
+    </div>
+
+    <!-- Mixed Data Testing -->
+    <div class="test-section category">
+        <h3>🔀 Mixed Sensitive Data</h3>
+        <textarea placeholder="Test multiple types together" rows="8">Contact info: john.doe@company.com, +65 9123 4567, jane.smith@corporate.org
+Financial: 4242 4242 4242 4242, 5555555555554444, GB82WEST12345698765432, DE89370400440532013000
+Identity: S1234567A, T9876543B, 12345678A, 123456789B
+Network: https://admin.example.com, https://secret-dashboard.internal.com, 192.168.1.100, 10.0.0.1
+Security: Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.payload.signature, api_key="sk_live_1234567890abcdef"
+Crypto: 550e8400-e29b-41d4-a716-446655440000, AKIAIOSFODNN7EXAMPLE
+Files: /home/user/documents/secret.txt, C:\Users\Admin\Private\confidential.doc
+Secrets: password="MySecretPass123", token: bearer_abc123xyz789, secret_key="ultra_secure_key_456"
+Keys: -----BEGIN RSA PRIVATE KEY-----
+MIIEpAIBAAKCAQEA1234567890abcdefghijklmnop
+-----END RSA PRIVATE KEY-----
+Cookies: Set-Cookie: session_id=abc123def456; HttpOnly; Secure, Set-Cookie: auth_token=xyz789
+Base64: VGhpcyBpcyBhIHZlcnkgbG9uZyBiYXNlNjQgZW5jb2RlZCBzdHJpbmcgdGhhdCBzaG91bGQgYmUgZGV0ZWN0ZWQ=
+Hex: deadbeefcafebabe1234567890abcdef9876543210fedcba0987654321abcdef12345678</textarea>
+    </div>
+
+    <div style="margin-top: 40px; padding: 20px; background-color: #f0f8ff; border-radius: 5px;">
+        <h3>🧪 Quick Testing Instructions:</h3>
+        <ol>
+            <li><strong>Load the extension</strong> and make sure it's enabled in Chrome</li>
+            <li><strong>Open browser console</strong> (F12) to see debug logs</li>
+            <li><strong>Simply click on any input field</strong> - they're pre-filled with test data!</li>
+            <li><strong>Look for tooltips</strong> that should appear immediately when you focus on a field</li>
+            <li><strong>Test the Replace button</strong> in the tooltips to see data replacement</li>
+            <li><strong>Check console logs</strong> for detection details and any errors</li>
+            <li><strong>Try different fields</strong> to test various data types</li>
+        </ol>
+        
+        <div style="margin-top: 15px; padding: 10px; background-color: #e8f5e8; border-radius: 3px;">
+            <strong>💡 Pro Tips:</strong>
+            <ul style="margin: 5px 0;">
+                <li>Each input field contains real test data - just click to activate!</li>
+                <li>Watch the console for detailed detection logs</li>
+                <li>Try fields near the browser edges to test tooltip positioning</li>
+                <li>The contenteditable fields contain multiple data types at once</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Add some interactivity for testing
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Test page loaded - Privately extension should be active');
+            
+            // Add click handlers to test data boxes for easy copying
+            document.querySelectorAll('.test-data').forEach(element => {
+                element.style.cursor = 'pointer';
+                element.title = 'Click to copy test data';
+                
+                element.addEventListener('click', function() {
+                    navigator.clipboard.writeText(this.textContent.trim()).then(() => {
+                        const original = this.style.backgroundColor;
+                        this.style.backgroundColor = '#90EE90';
+                        setTimeout(() => {
+                            this.style.backgroundColor = original;
+                        }, 200);
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,251 @@
+:root {
+  /* === Brand Colors === */
+  --pg-primary: #2E7D32;
+  --pg-primary-accent: #4CAF50;
+  --pg-dark: #1B1F1E;
+  --pg-light-bg: #F5F5F5;
+  --pg-border: #E0E0E0;
+  --pg-white: #FFFFFF;
+
+  /* === UI Basics === */
+  --pg-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --pg-radius: 8px;
+  --pg-font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+body {
+  font: 14px var(--pg-font);
+  margin: 0;
+  background: var(--pg-light-bg);
+  color: var(--pg-dark);
+  line-height: 1.5;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+header h2 {
+  color: var(--pg-primary);
+  margin: 0 0 8px 0;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+header p {
+  color: #666;
+  margin: 0;
+  font-size: 16px;
+}
+
+.settings-section {
+  background: var(--pg-white);
+  border-radius: var(--pg-radius);
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: var(--pg-shadow);
+}
+
+.settings-section h3 {
+  color: var(--pg-primary);
+  margin: 0 0 16px 0;
+  font-size: 18px;
+  font-weight: 600;
+  border-bottom: 2px solid var(--pg-light-bg);
+  padding-bottom: 8px;
+}
+
+.section-description {
+  color: #666;
+  margin: 0 0 20px 0;
+  font-size: 14px;
+}
+
+.setting-item {
+  margin-bottom: 16px;
+}
+
+.toggle-label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.toggle-label input[type="checkbox"] {
+  margin-right: 12px;
+  accent-color: var(--pg-primary);
+  transform: scale(1.2);
+}
+
+.toggle-text {
+  color: var(--pg-dark);
+}
+
+label[for] {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: var(--pg-dark);
+}
+
+select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 2px solid var(--pg-border);
+  border-radius: var(--pg-radius);
+  background: var(--pg-white);
+  color: var(--pg-dark);
+  font-family: var(--pg-font);
+  font-size: 14px;
+  transition: border-color 0.3s;
+}
+
+select:focus {
+  outline: none;
+  border-color: var(--pg-primary);
+}
+
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.category-item {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  background: var(--pg-light-bg);
+  border: 2px solid transparent;
+  border-radius: var(--pg-radius);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.category-item:hover {
+  background: #E8F5E8;
+  border-color: var(--pg-primary-accent);
+}
+
+.category-item.active {
+  background: #E8F5E8;
+  border-color: var(--pg-primary);
+}
+
+.category-item input[type="checkbox"] {
+  margin-right: 12px;
+  accent-color: var(--pg-primary);
+}
+
+.category-label {
+  font-weight: 500;
+}
+
+.fake-data-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.fake-data-item {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 12px;
+  align-items: center;
+}
+
+.fake-data-label {
+  font-weight: 500;
+  color: var(--pg-dark);
+  font-size: 13px;
+}
+
+.fake-data-input {
+  padding: 8px 12px;
+  border: 2px solid var(--pg-border);
+  border-radius: var(--pg-radius);
+  font-family: var(--pg-font);
+  font-size: 14px;
+  transition: border-color 0.3s;
+}
+
+.fake-data-input:focus {
+  outline: none;
+  border-color: var(--pg-primary);
+}
+
+.allowlist-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: var(--pg-light-bg);
+  border-radius: var(--pg-radius);
+  margin-bottom: 8px;
+}
+
+.allowlist-url {
+  font-family: monospace;
+  color: var(--pg-dark);
+}
+
+.remove-allowlist {
+  background: #f44336;
+  color: white;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.remove-allowlist:hover {
+  background: #d32f2f;
+}
+
+.actions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin-top: 32px;
+}
+
+.button-primary {
+  background: var(--pg-primary);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: var(--pg-radius);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.button-primary:hover {
+  background: #1B5E20;
+}
+
+.button-secondary {
+  background: transparent;
+  color: var(--pg-primary);
+  border: 2px solid var(--pg-primary);
+  padding: 10px 24px;
+  border-radius: var(--pg-radius);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.button-secondary:hover {
+  background: var(--pg-primary);
+  color: white;
+}
