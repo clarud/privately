@@ -106,7 +106,7 @@ const DetectionEngine = {
   },
 
   /**
-   * Analyze text using local ONNX model for NAME and ADDRESS detection
+   * Analyze text using server ONNX model for NAME and ADDRESS detection
    * @param {string} text - Text to analyze
    * @param {Array} existingSpans - Already detected spans to avoid overlapping
    */
@@ -126,22 +126,18 @@ const DetectionEngine = {
         return [];
       }
       
-      // Check if existing regex spans already cover NAME/ADDRESS detection
+      // Check if existing regex spans already cover specific categories
       const hasNameSpan = existingSpans.some(span => span.label === 'NAME');
       const hasAddressSpan = existingSpans.some(span => span.label === 'ADDRESS');
       
-      if ((hasNameSpan && needsNameDetection) && (hasAddressSpan && needsAddressDetection)) {
-        console.log('⚡ Skipping ONNX - both NAME and ADDRESS already detected by regex');
-        return [];
-      }
-      
-      if (hasNameSpan && needsNameDetection && !needsAddressDetection) {
-        console.log('⚡ Skipping ONNX - NAME already detected by regex and ADDRESS disabled');
-        return [];
-      }
-      
-      if (hasAddressSpan && needsAddressDetection && !needsNameDetection) {
-        console.log('⚡ Skipping ONNX - ADDRESS already detected by regex and NAME disabled');
+      // Skip ONNX entirely if regex already found what we need
+      if ((hasNameSpan || !needsNameDetection) && (hasAddressSpan || !needsAddressDetection)) {
+        console.log('⚡ Skipping ONNX - regex already detected needed categories or categories disabled', {
+          hasNameSpan,
+          hasAddressSpan,
+          needsNameDetection,
+          needsAddressDetection
+        });
         return [];
       }
       
@@ -154,22 +150,54 @@ const DetectionEngine = {
         return [];
       }
       
-      // Run ONNX inference
-      const spans = await ONNXInference.predict(text);
+      // Create masked text to avoid analyzing already-detected regions
+      let maskedText = text;
+      let offsetMapping = []; // Track position changes due to masking
       
-      // Apply confidence threshold, filter based on user preferences, and add smart categorization
+      // Sort existing spans by start position (descending) to avoid offset issues
+      const sortedSpans = [...existingSpans].sort((a, b) => b.start - a.start);
+      
+      // Replace detected spans with placeholder text of same length
+      for (const span of sortedSpans) {
+        const spanLength = span.end - span.start;
+        const placeholder = 'X'.repeat(spanLength); // Same length placeholder
+        maskedText = maskedText.substring(0, span.start) + placeholder + maskedText.substring(span.end);
+        console.log(`🎭 Masked span "${span.text}" (${span.start}-${span.end}) with "${placeholder}"`);
+      }
+      
+      console.log(`🎭 Sending masked text to server: "${maskedText}"`);
+      
+      // Run ONNX inference on masked text
+      const spans = await ONNXInference.predict(maskedText);
+      
+      // Filter spans based on what we actually need and haven't found yet
       const filteredSpans = spans.filter(span => {
         const meetsConfidence = span.confidence >= CONFIG.ONNX_CONFIDENCE_THRESHOLD;
-        const isEnabled = (span.label === 'NAME' && needsNameDetection) ||
-                         (span.label === 'ADDRESS' && needsAddressDetection);
+        
+        // Only include if category is enabled and not already found by regex
+        const shouldInclude = (span.label === 'NAME' && needsNameDetection && !hasNameSpan) ||
+                             (span.label === 'ADDRESS' && needsAddressDetection && !hasAddressSpan);
+        
+        // Check if span falls within a masked region (contains only X characters)
+        const spanText = maskedText.substring(span.start, span.end);
+        const isMaskedRegion = /^X+$/.test(spanText);
+        
+        if (isMaskedRegion) {
+          console.log(`🎭 Rejecting span in masked region: "${spanText}" (${span.start}-${span.end})`);
+          return false;
+        }
         
         if (!meetsConfidence) {
           console.log(`🎯 Rejected ${span.label} prediction: confidence ${span.confidence.toFixed(3)} < ${CONFIG.ONNX_CONFIDENCE_THRESHOLD}`);
         }
         
-        return meetsConfidence && isEnabled;
+        if (!shouldInclude && meetsConfidence) {
+          console.log(`🚫 Skipping ${span.label} - ${hasNameSpan || hasAddressSpan ? 'already found by regex' : 'category disabled'}`);
+        }
+        
+        return meetsConfidence && shouldInclude;
       }).filter(span => {
-        // Remove spans that overlap with existing regex detections
+        // Remove spans that overlap with existing regex detections (additional safety check)
         const isOverlapping = existingSpans.some(existingSpan => {
           return DetectionEngine.spansOverlap(span, existingSpan);
         });
@@ -180,11 +208,15 @@ const DetectionEngine = {
         
         return !isOverlapping;
       }).map(span => {
+        // Map span text back to original text (since we used masked text for detection)
+        const originalText = text.substring(span.start, span.end);
+        
         // Apply smart categorization to ONNX results
-        const categorization = SmartCategorizer.analyzeDetection(span.text, span.label, span.confidence);
+        const categorization = SmartCategorizer.analyzeDetection(originalText, span.label, span.confidence);
         
         return {
           ...span,
+          text: originalText, // Use original text instead of masked text
           confidence: categorization.confidence,
           possibleCategories: categorization.possibleCategories,
           needsUserInput: categorization.needsUserInput,
@@ -193,7 +225,7 @@ const DetectionEngine = {
         };
       });
       
-      console.log('🎯 ONNX analysis results (>60% confidence, non-overlapping):', filteredSpans);
+      console.log('🎯 ONNX analysis results (after filtering):', filteredSpans);
       return filteredSpans;
     } catch (error) {
       console.error('❌ ONNX analysis failed:', error);

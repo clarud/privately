@@ -57,12 +57,16 @@ const handleInput = UtilityHelpers.debounce(async (element) => {
     filteredOut: allDetectedSpans.length - filteredSpans.length
   });
 
-  // Apply visual highlights for contenteditable elements
+  // Apply visual highlights based on element type
   if (element.isContentEditable) {
+    // Use inline span highlighting for contenteditable elements
     DOMHelpers.clearHighlights(element);
     if (filteredSpans.length > 0) {
       DOMHelpers.highlightContentEditable(element, filteredSpans);
     }
+  } else {
+    // Use background gradient highlighting for regular input fields
+    DOMHelpers.highlightInputField(element, filteredSpans);
   }
 
   // Show tooltip if sensitive data detected
@@ -110,9 +114,18 @@ function initializeEventListeners() {
       
       TooltipManager.removeAllTooltips();
       
-      // Clear highlights from previous element if it was contenteditable
-      if (previousElement && previousElement.isContentEditable) {
-        DOMHelpers.clearHighlights(previousElement);
+      // Clear highlights from previous element based on its type
+      if (previousElement) {
+        if (previousElement.isContentEditable) {
+          DOMHelpers.clearHighlights(previousElement);
+        } else {
+          DOMHelpers.clearInputHighlights(previousElement);
+          // Clean up event listeners
+          if (previousElement._pgCleanupListeners) {
+            previousElement._pgCleanupListeners();
+            previousElement._pgCleanupListeners = null;
+          }
+        }
       }
     }
 
@@ -121,6 +134,29 @@ function initializeEventListeners() {
       console.log('📝 Input event triggered on:', element);
       handleInput(element);
     });
+    
+    // Add scroll and resize listeners to reposition overlays for input fields
+    if (!element.isContentEditable) {
+      const repositionOverlay = () => {
+        if (element._pgOverlay) {
+          const inputRect = element.getBoundingClientRect();
+          element._pgOverlay.style.left = inputRect.left + 'px';
+          element._pgOverlay.style.top = inputRect.top + 'px';
+          element._pgOverlay.style.width = inputRect.width + 'px';
+          element._pgOverlay.style.height = inputRect.height + 'px';
+          console.log('🔄 Repositioned overlay to:', inputRect);
+        }
+      };
+      
+      window.addEventListener('scroll', repositionOverlay, { passive: true });
+      window.addEventListener('resize', repositionOverlay, { passive: true });
+      
+      // Store cleanup function
+      element._pgCleanupListeners = () => {
+        window.removeEventListener('scroll', repositionOverlay);
+        window.removeEventListener('resize', repositionOverlay);
+      };
+    }
     
     // Add blur listener to clean up when element loses focus
     element.addEventListener('blur', () => {
@@ -131,6 +167,13 @@ function initializeEventListeners() {
           TooltipManager.removeTooltip(element);
           if (element.isContentEditable) {
             DOMHelpers.clearHighlights(element);
+          } else {
+            DOMHelpers.clearInputHighlights(element);
+            // Clean up event listeners
+            if (element._pgCleanupListeners) {
+              element._pgCleanupListeners();
+              element._pgCleanupListeners = null;
+            }
           }
         }
       }, 150);

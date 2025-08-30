@@ -158,6 +158,58 @@
   border-radius: 2px;
 }
 
+/* === Input Field Overlay Highlights (Grammarly-style) === */
+.pg-input-overlay {
+  position: absolute !important;
+  pointer-events: none !important;
+  z-index: 999999 !important;
+  background: transparent !important;
+  border: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.pg-input-underline {
+  position: absolute !important;
+  height: 2px !important;
+  border-radius: 1px !important;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+  transition: opacity 0.2s ease !important;
+}
+
+.pg-input-underline:hover {
+  opacity: 0.8 !important;
+}
+
+/* Current violation being settled - special emphasis */
+.pg-current-violation {
+  height: 4px !important;
+  box-shadow: 0 0 8px rgba(255, 0, 0, 0.6) !important;
+  background-color: #ff4444 !important;
+}
+
+/* Pulsing animation for current violation */
+@keyframes pg-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.pg-current-violation {
+  animation: pg-pulse 2s infinite !important;
+}
+
+/* Remove old background-based highlighting */
+.pg-input-highlighted {
+  background-origin: border-box !important;
+  background-clip: border-box !important;
+  transition: background-image 0.2s ease !important;
+}
+
+.pg-input-highlighted:focus {
+  background-blend-mode: normal !important;
+}
+
 /* Violation type specific colors */
 .pg-underline[data-label="EMAIL"] {
   border-bottom-color: var(--pg-risk-high);

@@ -22,10 +22,10 @@ const DETECTORS = {
     rx: /[^\s]+@[^\s]+\.[^\s]+/g 
   },
   SG_PHONE: { 
-    rx: /(\+65[\s-]?)?[3689]\d{7}/g 
+    rx: /(?:\+?65[\s-]?)?[689]\d{7}/g 
   },
   URL: { 
-    rx: /(?:https?:\/\/|www\.)[^\s'"<>(){}[\]]+/g 
+    rx: /(?:https?:\/\/[^\s'"<>(){}[\]]+|www\.[^\s'"<>(){}[\]]+)/g 
   },
   IP: {
     rx: /\b(?:\d{1,3}\.){3}\d{1,3}\b/g,
@@ -34,8 +34,8 @@ const DETECTORS = {
 
   // Singapore Identifiers
   NRIC: {
-    rx: /\b[STFGM]\d{7}[A-Z]\b/g,
-    validate: (value) => ValidationHelpers.isValidNRIC(value),
+    rx: /(?:^|\s)([STFGM]\d{7}[A-Z])(?:\s|$)/g,
+    validate: (value) => ValidationHelpers.isValidNRIC(value.trim()),
   },
   POSTAL_SG: { rx: /\b\d{6}\b/g },
 
@@ -43,10 +43,6 @@ const DETECTORS = {
   CARD: { 
     rx: /\b\d{4}[\s-]?\d{4}[\s-]?\d{4}[\s-]?\d{4}\b/g, 
     validate: (value) => ValidationHelpers.luhnCheck(value) 
-  },
-  IBAN: {
-    rx: /\b[A-Z]{2}\d{2}[A-Z0-9]{11,30}\b/g,
-    validate: (value) => ValidationHelpers.ibanValidation(value),
   },
   JWT: {
     rx: /\beyJ[A-Za-z0-9_\-]*\.[A-Za-z0-9_\-]+\.[A-Za-z0-9_\-]+\b/g,
@@ -92,7 +88,6 @@ const FAKE_DATA_MAP = {
   CARD: "4242 4242 4242 4242",
   NRIC: "S1234567A",
   POSTAL_SG: "123456",
-  IBAN: "GB82WEST12345698765432",
   JWT: "eyJhbGciOiJIUzI1NiJ9.fake.signature",
   AWS_KEY: "AKIAIOSFODNN7EXAMPLE",
   SECRET: "fake_secret_key_123",
@@ -113,7 +108,7 @@ const DEFAULT_PREFERENCES = {
   mode: "balanced",
   categories: {
     EMAIL: true, SG_PHONE: true, URL: true, IP: true, IP_PRIVATE: true,
-    NRIC: true, POSTAL_SG: true, CARD: true, IBAN: true,
+    NRIC: true, POSTAL_SG: true, CARD: true,
     JWT: true, AWS_KEY: true, SECRET: true, PRIVATE_KEY: true,
     AUTH_HEADER: true, SET_COOKIE: true, FILEPATH: true, UUID: true,
     BASE64_LONG: true, HEX_LONG: true, NAME: true, ADDRESS: true

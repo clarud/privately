@@ -65,8 +65,17 @@ const TooltipManager = {
       // All violations have been processed
       console.log('✅ All violations processed');
       delete element.dataset.currentViolationIndex;
+      // Clear any remaining highlights
+      if (element.isContentEditable) {
+        DOMHelpers.clearHighlights(element);
+      } else {
+        DOMHelpers.clearInputHighlights(element);
+      }
       return;
     }
+
+    // Highlight the current violation being settled
+    DOMHelpers.highlightCurrentViolation(element, currentSpan, sortedSpans);
 
     const elementRect = element.getBoundingClientRect();
     const tooltip = document.createElement('div');
@@ -375,6 +384,13 @@ const TooltipManager = {
       delete element.dataset.currentViolationIndex;
       TooltipManager.removeTooltip(element);
       
+      // Clear highlights
+      if (element.isContentEditable) {
+        DOMHelpers.clearHighlights(element);
+      } else {
+        DOMHelpers.clearInputHighlights(element);
+      }
+      
       // Re-analyze the element to detect any remaining violations
       setTimeout(() => {
         const inputEvent = new Event('input', { bubbles: true });
@@ -384,6 +400,12 @@ const TooltipManager = {
       // Move to next violation
       element.dataset.currentViolationIndex = nextIndex.toString();
       console.log(`➡️ Moving to violation ${nextIndex + 1}/${allSpans.length}`);
+      
+      // Update highlights for the new current violation
+      const nextSpan = allSpans[nextIndex];
+      if (nextSpan) {
+        DOMHelpers.highlightCurrentViolation(element, nextSpan, allSpans);
+      }
       
       // Remove current tooltip and show next
       TooltipManager.removeTooltip(element);
