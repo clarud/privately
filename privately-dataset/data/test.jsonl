@@ -1,0 +1,18 @@
+{"id": "4f4747d8-ac33-4c8c-bd77-07c5e37987f8", "text": "My problem: when I run this in prod, it sometimes outputs None::None::None. Any idea why values missing even though constants are defined?", "spans": []}
+{"id": "2ed50ae1-41bb-4648-928c-7a81025704f1", "text": "class ImmigrationClient {", "spans": []}
+{"id": "1427b322-a430-407d-b3b0-cf88a322db94", "text": "constructor() {", "spans": []}
+{"id": "3ba42d1c-4ac9-4763-a8f4-0f1fac071d34", "text": "this.name = \"Venugobal Thangaraju\";", "spans": [{"start":12,"end":33,"label":"PER"}]}
+{"id": "2ecfc15d-d6ba-490b-b827-4fe0c2566554", "text": "this.org = \"PearVisa Immigration Services\";", "spans": [{"start":11,"end":40,"label":"ORG"}]}
+{"id": "b298a8d2-2796-4fe7-8a9d-21c7cd76a35c", "text": "ORG = r\"(Caresoft Global|Vertiv Energy|Mahindra Two Wheelers|Tangoe)\"", "spans": [{"start": 9, "end": 24, "label": "ORG"}, {"start": 25, "end": 38, "label": "ORG"}, {"start": 39, "end": 60, "label": "ORG"}, {"start": 61, "end": 67, "label": "ORG"}]}
+{"id": "0d6eb911-22f7-4715-ab8b-38f854d4c950", "text": "ADDR_PART = r\"(PASIR RIS ST 21|JURONG EAST ST 24|KIM KEAT LINK|ANG MO KIO AVE 3)\"", "spans": [{"start": 15, "end": 30, "label": "ADDR"}, {"start": 31, "end": 48, "label": "ADDR"}, {"start": 49, "end": 62, "label": "ADDR"}, {"start": 63, "end": 79, "label": "ADDR"}]}
+{"id": "4ab9fcfa-2cca-4ca5-8721-18f86e00c8a4", "text": "NAME_HINT = r\"(Muhammad\\s+[A-Z][a-z]+(?:\\s[A-Z][a-z]+)*|Audra\\s+Morrice)\"", "spans": [{"start": 14, "end": 23, "label": "PER"}, {"start": 56, "end": 70, "label": "PER"}]}
+{"id": "95b04329-6484-4195-a741-15970bcf3b8a", "text": "text = re.sub(ADDR_FULL, \"[ADDR]\", text)", "spans": []}
+{"id": "8b4d0024-d0aa-4daf-92a6-3dac749266bc", "text": "text = re.sub(ADDR_PART, \"[ADDR_PART]\", text)", "spans": []}
+{"id": "b261acb2-bad8-427e-87cf-1cb96b10cf10", "text": "Traceback (most recent call last):", "spans": []}
+{"id": "3b5be879-6743-468d-bec4-2313bb3950a0", "text": "File \"/srv/checkout/normalize.py\", line 77, in normalize_sg_address", "spans": []}
+{"id": "4543dd74-408a-4f8b-bcfd-a064a8105704", "text": "postal = a[\"postal\"]", "spans": []}
+{"id": "52bfb4cd-bf84-44b3-bf90-5d837fe565c1", "text": "assert addr.street == \"C'WEALTH Crescent\"", "spans": [{"start": 24, "end": 42, "label": "ADDR"}]}
+{"id": "b76c7f87-0fbe-4272-951c-e234b431e655", "text": "addr2 = normalize_address(None, None, \"bedok\", None, None)", "spans": [{"start": 39, "end": 47, "label": "ADDR"}]}
+{"id": "a847ba45-1d8c-43a2-a079-3dc21d0aa1ff", "text": "assert addr2.town == \"Macpherson\"", "spans": [{"start": 22, "end": 32, "label": "ADDR"}]}
+{"id": "9f8b18c5-636b-40d6-bdc3-fc310d83076f", "text": "--- Node.js (deterministic redaction utility + tests)", "spans": []}
+{"id": "92f7ee9e-1917-4fa7-becf-6325c395a0fb", "text": "function redact(input) {", "spans": []}

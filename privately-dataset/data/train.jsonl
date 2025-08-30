@@ -1,0 +1,216 @@
+{"id": "7c48af7e-93be-41dc-afdd-bf3ed5ce5885", "text": "Need help fixing regex for redaction. Logs still leaking user names and addresses:", "spans": []}
+{"id": "9fc73f60-9226-4ca3-a22b-937e70efcc79", "text": "[LOG] ERROR: customer=Tan Chun Wei Jack org=\"Infosys Technologies Limited\" addr=\"Blk 245 Bedok Sth Ave 1 #05-67 S(460123)\"", "spans": [{"start":22, "end":39, "label":"PER"}, {"start":45, "end":73, "label":"ORG"}, {"start":81, "end":121, "label":"ADDR"}]}
+{"id": "5aa4edb6-a5a8-4d5c-9ab3-a1c029a21c44", "text": "[LOG] WARN: cust=\"Faizal\" org=\"Workforce Singapore\" addr=\"Bedok\"", "spans": [{"start":18, "end":24, "label":"PER"}, {"start":31, "end":50, "label":"ORG"}, {"start":58, "end":63, "label":"ADDR"}]}
+{"id": "feb6e57a-e3db-41d3-a291-b8fe935c7e02", "text": "Current regex misses short towns like “Bedok” and partial names like “Jun Wei”.", "spans": [{"start":39, "end":44, "label":"ADDR"}, {"start":70, "end":77, "label":"PER"}]}
+{"id": "1857d25c-3846-4749-add6-ad712232a3fb", "text": "How can I redesign this to catch both full and partial names/addresses without false positives on English words?", "spans": []}
+{"id": "4a78b496-9755-41c3-8a25-6ddaf8a38ce3", "text": "Getting constraint errors in SG DB:", "spans": []}
+{"id": "1b980bd0-7bc7-4207-93bf-d8d106c8d56f", "text": "INSERT INTO sg_customers (id, full_name, org, address_line, postal_code)", "spans": []}
+{"id": "c09ebefd-7c55-405a-be6c-d6148a2f91ab", "text": "VALUES", "spans": []}
+{"id": "8b06c0aa-281f-4c52-91af-b985c71521fb", "text": "(301, 'Mark Tan', 'Advanced Micro Devices Co.', 'Cantonment Rd', NULL);", "spans": [{"start":7, "end":15, "label":"PER"}, {"start":19, "end":45, "label":"ORG"}, {"start":49, "end":62, "label":"ADDR"}]}
+{"id": "8a7ecbeb-ee61-46a3-a876-f512526c49ab", "text": "Fails on postal_code NOT NULL.", "spans": []}
+{"id": "b4f544fe-e795-4c88-9d86-09208fe8a6e4", "text": "In Singapore, sometimes only town names like Tampines or Woodlands are available. Should I:", "spans": [{"start":45, "end":53, "label":"ADDR"}, {"start":57, "end":66, "label":"ADDR"}]}
+{"id": "892f16a2-cd71-43bb-a2cb-30fd6423227d", "text": "Make postal_code nullable with a CHECK,", "spans": []}
+{"id": "6cb50f41-8d99-4588-85a4-47255b968914", "text": "Store addresses in separate fields (blk, street, town, postal), or", "spans": []}
+{"id": "73936bb2-ef89-46f9-8312-fd1c63dd7b03", "text": "Use a background job to enrich with geocoding?", "spans": []}
+{"id": "f368dc88-f724-4ea3-a206-0731fefe52f8", "text": "File name and class embed organisation:", "spans": []}
+{"id": "f46a09d7-655c-4640-a415-f868588b5d46", "text": "How to enforce a pre-commit hook that scans Java source for PII in file/class names or string literals?", "spans": []}
+{"id": "c20287c9-c27f-44de-8ffe-f9f2824e9a1f", "text": "Found PII scattered in configs and filenames:", "spans": []}
+{"id": "236e5928-eef2-4524-9b06-da8d1cbc8dea", "text": "configs/sg/woodlands/whitelist.yaml → contains \"W!LD RICE\", \"C'WEALTH CRES\".", "spans": [{"start":11, "end":20, "label":"ADDR"}, {"start":48, "end":57, "label":"ORG"}, {"start":61, "end":74, "label":"ADDR"}]}
+{"id": "31229233-362d-4035-91e5-efb0abc36705", "text": "/backups/2025-08-30/clarence_chua-amd-export.csv → has personal + org in filename.", "spans": [{"start":20, "end":33, "label":"PER"}, {"start":34, "end":37, "label":"ORG"}]}
+{"id": "32ff8083-3a93-455f-bba1-802ce9036a1c", "text": "Python comments like # met Ang Peng Hwa @ Our Tampines Hub.", "spans": [{"start":27, "end":39, "label":"PER"}, {"start":42, "end":58, "label":"ADDR"}]}
+{"id": "24daae60-4bda-4031-b6ad-97770429b5ad", "text": "What’s the best multilayer approach (regex + lexicons + fuzzy + NLP) to detect SG-specific PII like names (Ang, Faizal, Santtosh), orgs (AMD, Ernst & Young LLP, Ya Kun Kaya Toast Pte Ltd), and addresses (full Blk to partial Bedok)?", "spans": [{"start":107, "end":110, "label":"PER"}, {"start":112, "end":118, "label":"PER"}, {"start":120, "end":128, "label":"PER"}, {"start":137, "end":140, "label":"ORG"}, {"start":142, "end":159, "label":"ORG"}, {"start":161, "end":186, "label":"ORG"}, {"start":209, "end":212, "label":"ADDR"}, {"start":224, "end":229, "label":"ADDR"}]}
+{"id": "1cba3691-4634-4dda-ad31-1855f636cfa7", "text": "[LOG] WARN trace=sg-7a22 user=Faizal org=Workforce Singapore addr=\"Bedok Sth Ave 1\" note=\"met @ Our Tampines Hub\"", "spans": [{"start":30, "end":36, "label":"PER"}, {"start":41, "end":60, "label":"ORG"}, {"start":67, "end":82, "label":"ADDR"}, {"start":96, "end":112, "label":"ADDR"}]}
+{"id": "df9ae23c-20ae-4f6e-98ad-7b7e496b1538", "text": "const redact = (s) => s", "spans": []}
+{"id": "3807a759-26c9-4943-9dc7-fe60c46fd387", "text": ".replace(/[A-Z][a-z]+(?:\\s[A-Z][a-z]+)*/, \"[REDACTED_NAME]\")", "spans": []}
+{"id": "ef3d2511-68ea-48aa-9aea-e075cbb6e623", "text": ".replace(/Blk\\s?\\d+[^,]+S", "spans": []}
+{"id": "d2e64405-e633-41fd-9f24-8cbdab6201b4", "text": "?\\d6?/i, \"[REDACTED_ADDR]\");", "spans": []}
+{"id": "f70ce3ec-c878-4186-b07f-7309285f77e6", "text": "console.log(redact(\"Meet Mohammed Faizal at 1 Tampines Walk #02-45 S(528523) with AMD rep\"));", "spans": [{"start":25, "end":40, "label":"PER"}, {"start":44, "end":76, "label":"ADDR"}, {"start":82, "end":85, "label":"ORG"}]}
+{"id": "c1dd6091-5858-4bd2-b2b4-fd4f87538f94", "text": "Question: This regex over-redacts normal nouns and misses town-only strings like “Bedok”. How can I combine dictionaries (names/orgs), address patterns (Blk, St, Ave, Rd, S(######)), and fuzzy matching to reduce false positives while covering SG variants (C'WEALTH CRES, SPOTTISWOODE PK RD, PUNGGOL FIELD)?", "spans": [{"start":82, "end":87, "label":"ADDR"}, {"start":256, "end":269, "label":"ADDR"}, {"start":271, "end":289, "label":"ADDR"}, {"start":291, "end":304, "label":"ADDR"}]}
+{"id": "2bcda435-6f59-4ddc-af54-208e80c1563b", "text": "[ERROR] 2025-08-30 10:05:02 SGT com.sg.amazon.billing.AmazonBillingClient - NullPointerException at line 77 when reading \"Joo Chiat Rd\"", "spans": [{"start":122, "end":134, "label":"ADDR"}]}
+{"id": "e105e0bd-ebc5-4a03-ae63-b3f4b512cd8a", "text": "package com.sg.amazon.billing;", "spans": [{"start":15, "end":21, "label":"ORG"}]}
+{"id": "c7f9422a-5ead-44cb-8bbe-7f066df3215a", "text": "public class AmazonBillingClient {", "spans": [{"start":13, "end":19, "label":"ORG"}]}
+{"id": "b5363668-2949-469c-b72e-d186174a0f2a", "text": "private static final String DEFAULT_ADDR = \"Joo Chiat Rd\"; // TODO(Sarah Ang): remove PII", "spans": [{"start":44, "end":56, "label":"ADDR"}, {"start":67, "end":76, "label":"PER"}]}
+{"id": "79b59b95-abaa-432a-b274-b94f9ce6fa99", "text": "public String formatInvoice(String name, String org) {", "spans": []}
+{"id": "9edfa425-4cec-4525-8494-b2b8293467d4", "text": "return name + \"@\" + org + \" -> \" + DEFAULT_ADDR;", "spans": []}
+{"id": "306b6c5a-21c5-4d66-b464-02fcf59689b8", "text": "Question: How do I enforce a pre-commit hook + static check (e.g., PMD/Checkstyle + custom rule) to block PII in Java package/class names and string literals (e.g., AmazonBillingClient, DEFAULT_ADDR), and auto-rewrite to safe placeholders during the build?", "spans": [{"start":165, "end":171, "label":"ORG"}]}
+{"id": "bc6bc202-0d7f-43c9-844b-43f8ee912179", "text": "CREATE TABLE sg_customers (", "spans": []}
+{"id": "2896d35b-d49e-4077-aba5-cd2853639b81", "text": "id BIGSERIAL PRIMARY KEY,", "spans": []}
+{"id": "984c4ded-3855-47ef-9223-61659a8d4c8a", "text": "full_name TEXT NOT NULL,", "spans": []}
+{"id": "0e7d2c95-8d99-4fd2-9374-93b41c25095e", "text": "org TEXT,", "spans": []}
+{"id": "02905906-5f6e-4463-ab96-17f2e1bbd859", "text": "blk TEXT,", "spans": []}
+{"id": "8b5dd419-ed49-456e-a37e-ca25c735141c", "text": "street TEXT,", "spans": []}
+{"id": "b18b0579-4d62-4164-8ed6-6b75c72f8cb6", "text": "town TEXT,", "spans": []}
+{"id": "1e14291e-6a09-4133-875d-5306f707b579", "text": "unit TEXT,", "spans": []}
+{"id": "9079a217-b8f8-47ad-bce9-71ff7d8c0268", "text": "postal CHAR(6),", "spans": []}
+{"id": "af98b1aa-04cc-4007-b1de-23cfaf2ff86f", "text": "created_at TIMESTAMP NOT NULL DEFAULT now()", "spans": []}
+{"id": "6e2c97e9-8e25-4e5b-a57f-9a6321d21f86", "text": "INSERT INTO sg_customers(full_name, org, street, town, postal)", "spans": []}
+{"id": "23910f18-79da-4bd6-80d5-3834adbc84a7", "text": "VALUES", "spans": []}
+{"id": "429a3e98-b07a-491b-9a67-0d97653a09f2", "text": "('Santtosh Mohan', 'Accenture', 'Cantonment Rd', NULL, NULL),", "spans": [{"start":2, "end":16, "label":"PER"}, {"start":20, "end":29, "label":"ORG"}, {"start":33, "end":46, "label":"ADDR"}]}
+{"id": "97b9df9e-f16b-40a2-b69c-8524bc6c514d", "text": "('Zafar Anjum', 'Deloitte', NULL, 'Tampines', NULL);", "spans": [{"start":2, "end":13, "label":"PER"}, {"start":17, "end":25, "label":"ORG"}, {"start":35, "end":43, "label":"ADDR"}]}
+{"id": "b976ee2d-9816-4815-b34b-1100df2dcc6a", "text": "Question: For Singapore data quality, should I enforce CHECK constraints like (postal ~ '^\\d{6}$') only when street/blk present, and allow town-only rows? Or maintain a staging table + background enrichment (geocoding) before promoting to production? Example migration and validation triggers?", "spans": []}
+{"id": "d00ad04c-ecdb-478e-9838-640339b38132", "text": "package checkout", "spans": []}
+{"id": "41b79af2-de76-420c-8a71-ce1250a1e0e7", "text": "// TODO(Anuar Zain): replace test user before commit", "spans": [{"start":8, "end":18, "label":"PER"}]}
+{"id": "f61abab8-5835-4ca5-a9d3-4cfe926c6e01", "text": "type YaKunOrderProcessor struct {", "spans": [{"start":5, "end":10, "label":"ORG"}]}
+{"id": "cd6020e9-2062-45af-8de1-0c710738169a", "text": "ContactName string", "spans": []}
+{"id": "02f4a66c-5192-4a52-bd4d-69e4c25b29d3", "text": "Address string", "spans": []}
+{"id": "c713abc9-8a80-475b-bd6b-e8a1419facee", "text": "var MohammedFaizalDelivery = map[string]string{\"street\":\"Bedok Sth Ave 1\", \"unit\":\"#05-67\", \"postal\":\"460123\"}", "spans": [{"start":4, "end":18, "label":"PER"}, {"start":57, "end":72, "label":"ADDR"}, {"start":83, "end":89, "label":"ADDR"}, {"start":102, "end":108, "label":"ADDR"}]}
+{"id": "aa44cbfa-1c25-4390-a2c1-17aa7d02f754", "text": "Question: Any examples of Go AST passes or golangci-lint custom rules to flag PII in type/var names and string literals, with autofix to generic terms (OrgOrderProcessor, TestUser, TestAddress)?", "spans": []}
+{"id": "830ba4b0-0eaa-4933-90e2-cb2fa1b5fd05", "text": "k8s/sg/payments-deploy.yaml", "spans": []}
+{"id": "bf0f49fa-f012-4354-90a8-fa766bf641a3", "text": "name: SUPPORT_CONTACT", "spans": []}
+{"id": "18dbaedc-32ce-4e82-914b-2dfeaf268e4f", "text": "value: \"Janet Ang, Vox Camerata, Bedok\" # PII in config", "spans": [{"start":8, "end":17, "label":"PER"}, {"start":19, "end":31, "label":"ORG"}, {"start":33, "end":38, "label":"ADDR"}]}
+{"id": "0ae37de9-f81c-479f-b517-74a52e4b2ee7", "text": "name: HQ_ADDR", "spans": []}
+{"id": "7740838d-aa88-416b-a44e-376b5c577c05", "text": "value: \"Blk 88 Marine Terrace #09-05 S(440088)\"", "spans": [{"start":8, "end":46, "label":"ADDR"}]}
+{"id": "94ae0497-fddc-41ee-9c3c-b101cc21df6e", "text": "Question: What admission controller / OPA Gatekeeper policies can block PII-like patterns (names/orgs/SG addresses) in ConfigMaps/Env, and how to maintain a centrally versioned SG-specific dictionary without excessive false positives?", "spans": []}
+{"id": "5dd1de31-fe21-4237-8902-cd4688544264", "text": "<?php // FIXME(Ali Ahamed Anwar): remove hardcoded address $defaultAddr = \"SPOTTISWOODE PK RD\"; echo \"bill_to=\" . $_GET['name'] . \"@\" . $_GET['org'] . \" addr=\" . $defaultAddr; ?>", "spans": [{"start":15, "end":31, "label":"PER"}, {"start":75, "end":93, "label":"ADDR"}]}
+{"id": "d73d2dbf-e9aa-4601-9d04-b6c3f4e02220", "text": "[ERROR] 2025-08-30 11:12:33 SGT undefined index: org on /var/www/html/invoice.php:4", "spans": []}
+{"id": "6b871e56-45dd-438b-ace5-6015fda49293", "text": "Question: How to retrofit input validation + redaction middleware for legacy PHP (PSR-15) to prevent PII echoes in responses and logs, covering SG-specific address and org patterns (e.g., Wing Tai Holdings, Withers KhattarWong, Ya Kun Kaya Toast Pte Ltd)?", "spans": [{"start":188, "end":205, "label":"ORG"}, {"start":207, "end":226, "label":"ORG"}, {"start":228, "end":253, "label":"ORG"}]}
+{"id": "740b1136-b68c-49f5-8c52-4b5d43b75696", "text": "[ETL] parsing file s3://sg-prod/wildlife_reserves/GEYLANG_SERAI/contacts.parquet", "spans": [{"start":50, "end":63, "label":"ADDR"}]}
+{"id": "4ac4e44d-10b4-4b20-a55d-fd5cb387d8db", "text": "Name examples: \"Anjana Rai Chaudhuri\", \"Kannan Arumugam\", \"Wesley Leon Aroozoo\"", "spans": [{"start":16, "end":38, "label":"PER"}, {"start":40, "end":56, "label":"PER"}, {"start":58, "end":79, "label":"PER"}]}
+{"id": "3e92a095-9c82-4072-89e0-395e14849752", "text": "Address examples: \"LOR 7 TOA PAYOH\", \"PUNGGOL FIELD\", \"TELOK BLANGAH CRES\"", "spans": [{"start":19, "end":36, "label":"ADDR"}, {"start":38, "end":51, "label":"ADDR"}, {"start":53, "end":71, "label":"ADDR"}]}
+{"id": "cb8900ff-6ba6-40e6-ab73-a8ef8f648701", "text": "Question: In PySpark, how to design a UDF-free redaction pipeline (SQL exprs + broadcast maps + regex_extract) that scales, supports partial towns, and keeps non-PII words like “Amazon S3” unredacted when “Amazon” is a cloud service vs org?", "spans": [{"start":178, "end":184, "label":"ORG"}, {"start":206, "end":212, "label":"ORG"}]}
+{"id": "e7071208-40cd-4bfb-ae05-8dd65a6017de", "text": "src/services/sg/billing/amazon_billing_client.rs:119", "spans": [{"start":24, "end":30, "label":"ORG"}]}
+{"id": "3ec629cf-ed85-4cbb-b6f3-2124be7e1b23", "text": "// path contains org/name:", "spans": []}
+{"id": "61bd4832-e97a-432a-9d99-f1d5e5fbb0ee", "text": "let export = \"/backups/2025-08-30/clarence_tan-amd-export.csv\";", "spans": [{"start":34, "end":46, "label":"PER"}, {"start":47, "end":50, "label":"ORG"}]}
+{"id": "4f863898-5485-422e-b1ca-f4efe8c479ca", "text": "Question: How can I write a Rust deny-by-default lint (clippy plugin or procedural macro) to block file paths and identifiers containing likely PII (names/orgs/addresses), with a local SG dictionary and a waiver process for false positives?", "spans": []}
+{"id": "8cfc26ee-7194-45bb-b469-92fc2c21dfed", "text": "grep -E -n \"(Blk [0-9]|Singapore [0-9]{6}|Tampines|Bedok|C'WEALTH CRES|AMD|Ernst & Young)\" -r .", "spans": [{"start":42, "end":50, "label":"ADDR"}, {"start":51, "end":56, "label":"ADDR"}, {"start":57, "end":70, "label":"ADDR"}, {"start":71, "end":74, "label":"ORG"}, {"start":75, "end":88, "label":"ORG"}]}
+{"id": "072022e1-9169-4d2c-9d4e-79913d18479c", "text": "Problem: Flags “Amazon ECS” and “Samsung TV” even when not PII context; misses uppercase no-vowel tokens and mixed case like \"W!LD RICE\".", "spans": [{"start":16, "end":22, "label":"ORG"}, {"start":33, "end":40, "label":"ORG"}, {"start":126, "end":135, "label":"ORG"}]}
+{"id": "9026fcd6-2105-44c3-9ebd-dfb377661dc1", "text": "Question: How to replace this with a context-aware scanner (token windows + type tags name/org/address) and keep performance acceptable in CI for a 2M-line repo?", "spans": []}
+{"id": "f59933a8-7abe-44ff-9a11-9fe47312f90c", "text": "LOG 2025-08-30 15:11:22 SGT] ERROR user=\"Abdul Samad\" org=\"Cipla Pharmaceutical\" addr=\"Blk 22 EUNOS CRES #09-12 S(401022)\"", "spans": [{"start":41, "end":52, "label":"PER"}, {"start":59, "end":79, "label":"ORG"}, {"start":87, "end":121, "label":"ADDR"}]}
+{"id": "8f614585-66c6-4499-ad10-6f8909704291", "text": "Traceback (most recent call last):", "spans": []}
+{"id": "5b3e316a-96c1-4f97-8e2a-60570ab1e981", "text": "File \"/srv/payments/processor.py\", line 88, in charge_customer", "spans": []}
+{"id": "5a765d73-65cd-431e-882c-8319cbf3de68", "text": "ref = payload[\"address\"][\"postal\"]", "spans": []}
+{"id": "1f8dd71c-1df0-4150-aa9d-8432b3c7af01", "text": "KeyError: 'postal'", "spans": []}
+{"id": "d31ec1e8-25ae-4d37-9f19-0d24e98435f8", "text": "def normalize_customer(payload: dict):", "spans": []}
+{"id": "a3bf0530-f712-405e-ad31-7ee0bae867b7", "text": "# FIXME(Abhi Krish): fails when only town like \"Bedok\" is given", "spans": [{"start":8, "end":18, "label":"PER"}, {"start":48, "end":53, "label":"ADDR"}]}
+{"id": "8e044a11-00dd-444a-9fa6-97ad59301b4e", "text": "return {\"postal\": payload[\"address\"][\"postal\"]}", "spans": []}
+{"id": "66b0c3b6-a049-4e7f-8612-8ed7fb1c9a52", "text": "How should I refactor this to safely handle Singapore addresses that are partial (e.g., “Bedok”, “Tampines”), full with postal, or abbreviated like “KEMPAS RD”?", "spans": [{"start":89, "end":94, "label":"ADDR"}, {"start":98, "end":106, "label":"ADDR"}, {"start":149, "end":158, "label":"ADDR"}]}
+{"id": "d2047727-a505-4542-a3c6-abc5ace080ee", "text": "@dataclass(frozen=True)", "spans": []}
+{"id": "f3f2bbce-e3aa-400b-89f2-c2283f58c3ca", "text": "town: Optional[str]", "spans": []}
+{"id": "7ecee2c6-b883-450a-bcf5-9862fecac8b3", "text": "unit: Optional[str]", "spans": []}
+{"id": "b5810610-ac46-41f7-a806-918200dcf52c", "text": "postal: Optional[str]", "spans": []}
+{"id": "75c2d00b-ef8f-450f-a52b-de1c2b528e7a", "text": "COMMON_TOWNS = {\"Bedok\", \"Tampines\", \"Woodlands\", \"Bishan\", \"Hougang\", \"Clementi\"}", "spans": [{"start":17, "end":22, "label":"ADDR"}, {"start":26, "end":34, "label":"ADDR"}, {"start":38, "end":47, "label":"ADDR"}, {"start":51, "end":57, "label":"ADDR"}, {"start":61, "end":68, "label":"ADDR"}, {"start":72, "end":80, "label":"ADDR"}]}
+{"id": "8493e563-4def-433f-84e2-bfa12116cd2f", "text": "ABBR = {\"AVE\": \"Avenue\", \"ST\": \"Street\", \"RD\": \"Road\", \"CRES\": \"Crescent\"}", "spans": []}
+{"id": "70e8aa79-2f49-4668-9145-6a8464e73815", "text": "def normalize_street(s: Optional[str]) -> Optional[str]:", "spans": []}
+{"id": "b1b0b4fd-802e-4f92-baf2-0d14916115db", "text": "return s", "spans": []}
+{"id": "c2d8c566-6dd1-446b-aaec-bbf6aa4044a1", "text": "parts = []", "spans": []}
+{"id": "cf029429-b349-427d-ad1c-407a46fa0266", "text": "for token in s.split():", "spans": []}
+{"id": "2f1fab10-8ca6-4230-b36e-915603d56859", "text": "upper = token.strip(\"()'\").upper()", "spans": []}
+{"id": "1aa19ced-2272-42fa-88cf-a016f825d98c", "text": "parts.append(ABBR.get(upper, token))", "spans": []}
+{"id": "ecc6a013-57c4-4a8f-8c95-70e17c643bce", "text": "return \" \".join(parts)", "spans": []}
+{"id": "ec3452dc-a778-4dd5-978c-67acdf58cd84", "text": "def normalize_address(blk: Optional[str], street: Optional[str], town: Optional[str],", "spans": []}
+{"id": "d72ddcb1-82ed-4b98-b776-5df7553822be", "text": "unit: Optional[str], postal: Optional[str]) -> SgAddress:", "spans": []}
+{"id": "30da5441-02e4-4fa0-b881-92920be2f997", "text": "return SgAddress(", "spans": []}
+{"id": "29d8d88f-2806-4ffb-83ae-b726b97ef50a", "text": "blk=blk.strip() if blk else None,", "spans": []}
+{"id": "fdee745e-798c-42b2-9549-39df540cc872", "text": "street=normalize_street(street.strip() if street else None),", "spans": []}
+{"id": "c9a71ce1-37ba-4f1e-93b3-aed2cfa70b8a", "text": "town=town.title().strip() if town else None,", "spans": []}
+{"id": "f2e8ea80-c4eb-47e7-a05b-71721fc10638", "text": "unit=unit.upper().strip() if unit else None,", "spans": []}
+{"id": "c7873cfd-e776-4c23-bef6-84b673cc4b66", "text": "postal=postal.strip() if postal else None", "spans": []}
+{"id": "0c5948da-9a9a-45d2-947b-520ae1fe1992", "text": "Example usage + simple assertions", "spans": []}
+{"id": "9eaa9996-11b0-47fa-8ff2-ae4f7cc7ecb4", "text": "addr = normalize_address(\"Blk 12\", \"C'WEALTH CRES\", None, \"#03-11\", \"089765\")", "spans": [{"start": 26, "end": 32, "label": "ADDR"}, {"start": 34, "end": 51, "label": "ADDR"}]}
+{"id": "c149ebc5-75e0-4e7a-ac3f-81d239e78f4e", "text": "const ORG = /\b(Ernst & Young|Workforce Singapore|Ya Kun (?:Kaya )?Toast(?: Pte Ltd)?|Cipla Pharmaceutical)\b/gi;", "spans": [{"start": 15, "end": 28, "label": "ORG"}, {"start": 29, "end": 48, "label": "ORG"}, {"start": 49, "end": 55, "label": "ORG"}, {"start": 94, "end": 110, "label": "ORG"}]}
+{"id": "8e34e37f-9f38-4670-8cbe-297914e33325", "text": "const TOWN = /\b(Bedok|Tampines|Woodlands|Bishan|Hougang|Clementi)\b/gi;", "spans": [{"start": 16, "end": 21, "label": "ADDR"}, {"start": 22, "end": 30, "label": "ADDR"}, {"start": 31, "end": 40, "label": "ADDR"}, {"start": 41, "end": 47, "label": "ADDR"}, {"start": 48, "end": 55, "label": "ADDR"}, {"start": 56, "end": 64, "label": "ADDR"}]}
+{"id": "d9056440-71f4-4177-a922-d48970257646", "text": "[LOG 2025-08-30 16:21:07 SGT] ERROR user=\"Chew Hiong San\" org=\"SPI GLOBAL\" addr=\"POTONG PASIR AVE 1\" route=/api/orders/normalize err=KeyError('postal')", "spans": [{"start": 41, "end": 56, "label": "PER"}, {"start": 63, "end": 73, "label": "ORG"}, {"start": 81, "end": 99, "label": "ADDR"}]}
+{"id": "cc10a3fa-9982-4a95-bff5-d62c9e56ec5e", "text": "def normalize_sg_address(a: dict) -> dict:", "spans": []}
+{"id": "d0b8cf4c-5fe1-4d22-b516-242c7f2c1b12", "text": "# FIXME: supports full addresses but fails on town-only like \"POTONG PASIR AVE 1\"", "spans": [{"start": 62, "end": 80, "label": "ADDR"}]}
+{"id": "36ee4a21-9ca6-4b54-9678-165a200dbf4e", "text": "return {\"blk\": a[\"blk\"], \"street\": a[\"street\"], \"unit\": a[\"unit\"], \"postal\": a[\"postal\"]}", "spans": []}
+{"id": "71659683-541c-4e80-b614-31ad5d4928bc", "text": "Question: How should I redesign this to gracefully handle partial Singapore addresses (e.g., POTONG PASIR AVE 1) without raising KeyError?", "spans": [{"start": 92, "end": 111, "label": "ADDR"}]}
+{"id": "6d04daa1-ae3f-405e-9d1d-01ef9e901379", "text": "[ERROR] 2025-08-30 11:02:13 SGT com.sg.citicorp.Invoice - NullPointerException at CiticorpInvoice.java:74", "spans": [{"start": 39, "end": 47, "label": "ORG"}, {"start": 82, "end": 90, "label": "ORG"}]}
+{"id": "19a311a5-f1b6-4d42-b5e1-d226ced9167f", "text": "public class CiticorpInvoice {", "spans": [{"start": 13, "end": 21, "label": "ORG"}]}
+{"id": "91cfddd4-f865-4c5c-853e-e668089b0a29", "text": "private static final String DEFAULT_ORG = \"Citicorp\";", "spans": [{"start": 43, "end": 51, "label": "ORG"}]}
+{"id": "d91ac86a-46b0-4e44-a1fa-cbdf3eed4b2d", "text": "thread 'main' panicked at 'failed to load profile for Victor Chew (BEML) at CANTONMENT CL', src/profile.rs:71", "spans": [{"start": 54, "end": 65, "label": "PER"}, {"start": 76, "end": 87, "label": "ADDR"}]}
+{"id": "a1615208-3275-4920-b2ce-47bd491075c0", "text": "let filename = format!(\"/backups/{}/victor_chew-beml-CANTONMENT_CL.json\", date);", "spans": [{"start": 36, "end": 47, "label": "PER"}, {"start": 53, "end": 63, "label": "ADDR"}]}
+{"id": "84a59112-7110-47e7-b14b-0951ce6dcb97", "text": "Question: Any Clippy lint or build-step that can flag filenames/paths containing SG names/orgs/addresses before publish?", "spans": []}
+{"id": "142675bd-e149-4f1a-9499-87480597a18b", "text": "NSERT INTO sg_customers (full_name, org, address_line, postal) VALUES", "spans": []}
+{"id": "d18fdd34-d385-4922-8339-f82a2eee6d9f", "text": "('James Leo', 'Espire Infolabs', 'CLEMENTI AVE 6', NULL),", "spans": [{"start": 2, "end": 11, "label": "PER"}, {"start": 15, "end": 30, "label": "ORG"}, {"start": 34, "end": 49, "label": "ADDR"}]}
+{"id": "437c8189-8451-4433-b2cc-afeeaece129f", "text": "('Leo Yee Sin', 'Primus Global Technologies', 'NEW UPP CHANGI RD', NULL),", "spans": [{"start": 2, "end": 13, "label": "PER"}, {"start": 17, "end": 42, "label": "ORG"}, {"start": 47, "end": 64, "label": "ADDR"}]}
+{"id": "dd760645-05ca-4df2-9290-4220074add7c", "text": "('Leong Chee Chiew', 'TechnipFMC', 'PUNGGOL PL', NULL);", "spans": [{"start": 2, "end": 18, "label": "PER"}, {"start": 21, "end": 33, "label": "ORG"}, {"start": 35, "end": 45, "label": "ADDR"}]}
+{"id": "4b747aee-5db2-4779-8147-affe93249c2e", "text": "These rows fail because postal is NOT NULL in schema. In Singapore, records often only have town or street (e.g., CLEMENTI AVE 6, PUNGGOL PL). Should I:", "spans": [{"start": 114, "end": 128, "label": "ADDR"}, {"start": 130, "end": 140  , "label": "ADDR"}]}
+{"id": "3bde8088-0198-444f-991e-cf72eb8a636c", "text": "Keep postal nullable with a CHECK constraint,", "spans": []}
+{"id": "ed218156-bfc7-488a-9bbe-f92658fc5abe", "text": "Store addresses as structured fields (blk/street/town/postal), or", "spans": []}
+{"id": "56fa452b-d2ea-4844-97e0-fe7f41fb4953", "text": "Accept partial addresses and enrich with geocoding later?", "spans": []}
+{"id": "172c8b62-39f1-4506-a093-cddfc88ec9e9", "text": "[LOG 2025-08-30 18:42:11 SGT] ERROR user=\"Muhammad Fuad Salim\" org=\"Caresoft Global\" addr=\"PASIR RIS ST 21\" route=/api/checkout/confirm err=KeyError('postal')", "spans": [{"start": 42, "end": 61, "label": "PER"}, {"start": 68, "end": 83, "label": "ORG"}, {"start": 91, "end": 106, "label": "ADDR"}]}
+{"id": "0591bc33-0d9b-4adc-85b9-87e67144e5aa", "text": "KeyError: 'postal'", "spans": []}
+{"id":"eb413e04-feb2-4072-ad6b-73960eb2c430","text":"[LOG 2025-08-30 18:42:12 SGT] WARN user=\"Audra Morrice\" org=\"Vertiv Energy\" addr=\"JURONG EAST ST 24\" msg=\"fallback to town-only flow\"","spans":[{"start":41,"end":54,"label":"PER"},{"start":61,"end":74,"label":"ORG"},{"start":82,"end":99,"label":"ADDR"}]}
+{"id": "3c6c86e2-2b5d-4b4a-911c-270ba75c30ff", "text": "def redact_sg(text: str) -> str:", "spans": []}
+{"id": "953957e3-d039-45cd-a9df-ce120f3f7648", "text": "import re", "spans": []}
+{"id": "6774ad64-1196-4571-b787-e13a518a8b0a", "text": "text = re.sub(ORG, \"[ORG]\", text)", "spans": []}
+{"id": "2d7af142-0363-4abf-b9af-df403d32596b", "text": "text = re.sub(NAME_HINT, \"[NAME]\", text)", "spans": []}
+{"id": "dc4587a0-5ea3-4b61-809f-78b92a86f7bc", "text": "return text", "spans": []}
+{"id":"5d206302-605f-4629-8a80-34bb75ec0b2e","text":"Question: How should I redesign normalize_sg_address to accept partial SG addresses (e.g., northshore) without KeyError, and improve redact_sg so it reliably catches Malay name variants (samuel, ronwong) and common streets (fernvale plaza, fajar rd) without over-redacting normal words?","spans":[{"start":91,"end":101,"label":"ADDR"},{"start":187,"end":193,"label":"PER"},{"start":195,"end":202,"label":"PER"},{"start":224,"end":238,"label":"ADDR"},{"start":240,"end":248,"label":"ADDR"}]}
+{"id": "57c15021-a59f-4878-a79c-7055b4bf5ec2", "text": "[BUILD] WARN detected PII in identifiers and paths", "spans": []}
+{"id": "217821da-e8d8-41d9-88b1-54cf714507f3", "text": "File: exporters//alfredProjectsExporter.ts", "spans": [{"start": 17, "end": 23, "label": "PER"}]}
+{"id": "cbca8196-53b5-49c6-94c2-f0efa07ca799", "text": "class peterProjectsExporter {", "spans": [{"start": 6, "end": 11, "label": "PER"}]}
+{"id": "5d72fb46-1123-418d-9beb-e42a6df783ef", "text": "exportCustomer(wang xin = \"molly tay\", org = \"micron\", addr = \"queen's rd\") {", "spans": [{"start":15,"end":23,"label":"PER"}, {"start":27,"end":36,"label":"PER"}, {"start":46,"end":52,"label":"ORG"}, {"start":63,"end":73,"label":"ADDR"}]}
+{"id":"example-1","text":"console.error(\"export\", nicholaschris, org, addr);","spans":[{"start":24,"end":37,"label":"PER"}]}
+{"id": "892f2110-7c50-4cb2-ad8d-5a44c1a812c5", "text": "const jeremyMonteiroTangoe = { street: \"KIM KEAT LINK\", org: \"Tangoe\" };", "spans": [{"start": 40, "end": 52, "label": "ADDR"}, {"start": 62, "end": 68, "label": "ORG"}]}
+{"id": "4c6ea716-ec5a-440a-a614-d733a68019e4", "text": "const mfaishal = { name: \"Muhammad Faishal Ibrahim\", org: \"Mahindra Two Wheelers\", addr: \"KIM KEAT LINK\" };", "spans": [{"start": 25, "end": 49, "label": "PER"}, {"start": 59, "end": 79, "label": "ORG"}, {"start": 90, "end": 102, "label": "ADDR"}]}
+{"id": "728a91bd-1024-46ec-bd65-252165eda78e", "text": "// artifact: /snapshots/sg/jookoon/moses_c_moses-OlamInfoServices-taiseng_lane_21.csv", "spans": [{"start":27, "end":34, "label":"ADDR"}, {"start":35, "end":48, "label":"PER"}, {"start":66, "end":81, "label":"ADDR"}]}
+{"id": "b4029211-1e25-4d75-9c83-11c0925a0249", "text": "Question: What ESLint/TS AST rules or custom codemods can I add to (1) block names/orgs/SG addresses in class/function/variable identifiers (e.g., zacharyProjectsExporter, muhammadJailaniAbuTalib, jeremyMonteiroTangoe), (2) detect and rewrite string literals like \"hougang ST 5\" or \"jalan besar LINK\" to placeholders, and (3) scan build artifacts/paths (…geylangBahru.csv) in CI without huge performance hits?", "spans": [{"start":147, "end":154, "label":"PER"}, {"start":172, "end":195, "label":"PER"}, {"start":197, "end":217, "label":"PER"}, {"start":265, "end":277, "label":"ADDR"}, {"start":283, "end":299, "label":"ADDR"}, {"start":355, "end":371, "label":"ADDR"}]}
+{"id": "e1f2424a-afff-4cd1-85e1-f708ebbf0509", "text": "[LOG 2025-08-30 21:07:11 SGT] WARN build=9132 path=\"artifacts/exports/2025-08-30/charlesyeo-shopee-changi-city-point.csv\" reason=\"pii-like filename\"", "spans": [{"start": 81, "end": 91, "label": "PER"}, {"start": 92, "end": 98, "label": "ORG"}, {"start": 99, "end": 116, "label": "ADDR"}]}
+{"id": "1736fd27-bc81-490c-b638-05180fd5ac36", "text": "[LOG 2025-08-30 21:07:12 SGT] ERROR job=redact-k8s-config msg=\"address token leaked\" token=\"kent ridge\"", "spans": [{"start": 91, "end": 102, "label": "ADDR"}]}
+{"id": "7f53b786-ccd9-4ca1-a6d1-a69b8cdfd311", "text": "name: CONTACT", "spans": []}
+{"id": "374ecb2a-1a31-4e4b-9255-3ad17ccbc3e8", "text": "value: \"James Mark Jeyasebasingam Supramaniam @ Swiss Re\" # SG name + org", "spans": [{"start": 8, "end": 45, "label": "PER"}, {"start": 48, "end": 56, "label": "ORG"}]}
+{"id": "87464c08-5d27-4353-8d57-1281d6c99b5b", "text": "name: HQ_STREET", "spans": []}
+{"id": "8281cd06-399b-4562-b1ac-ab96ff8ea80d", "text": "value: \"CLEMENTI AVE 4\" # SG street", "spans": [{"start": 8, "end": 23, "label": "ADDR"}]}
+{"id": "72d2643a-069f-4c28-b433-8bf2417fa894", "text": "name: ALT_ADDR", "spans": []}
+{"id": "9a019d79-c073-4ac9-ab95-2be4e92be770", "text": "value: \"ANCHORVALE DR\"", "spans": [{"start": 8, "end": 21, "label": "ADDR"}]}
+{"id": "631210db-0253-44ce-a561-cbdd29e26d18", "text": "Dockerfile (bad comment)", "spans": []}
+{"id": "0e43c22e-e99f-4c1d-84da-feac24eb72bd", "text": "class RehauPolymersClient: # org in class name", "spans": [{"start": 6, "end": 19, "label": "ORG"}]}
+{"id": "09298d6e-ed13-42bc-a38f-9b528dc44155", "text": "def create_order(self, customer=\"Suos Sodavy\", street=\"MARGARET DR\"):", "spans": [{"start": 33, "end": 44, "label": "PER"}, {"start": 55, "end": 68, "label": "ADDR"}]}
+{"id": "e10a53e9-6d2a-437f-82f3-61f818d3dba0", "text": "return f\"ok:{customer}:{street}\"", "spans": []}
+{"id": "1dea56e6-635d-4051-be63-436d26d2de5b", "text": "Shell step leaking PII into path", "spans": []}
+{"id": "0120aaae-0417-444c-ac89-d0c75ec5b096", "text": "cp exports/tmp/\"Sundaresh_Menon-RadissonBlu-EUNOS_CRES.csv\" \"$ARTIFACT_DIR/\"", "spans": [{"start": 16, "end": 31, "label": "PER"}, {"start": 32, "end": 43, "label": "ORG"}, {"start": 44, "end": 55, "label": "ADDR"}]}
+{"id": "2176b79f-e038-4fae-bf2a-cea4c3899031", "text": "Question: How do I design a single CI policy (OPA Gatekeeper + custom linters) that (1) blocks SG PII in env values (names like James Mark Jeyasebasingam Supramaniam, orgs like Swiss Re, streets like CLEMENTI AVE 4), (2) rejects filenames/paths with PII (e.g., EUNOS_CRES), and (3) scans code identifiers/comments (RehauPolymersClient, V. Sundramoorthy) with auto-remediation (rewrite to placeholders) while keeping build times reasonable?", "spans": [{"start": 128, "end": 165, "label": "PER"}, {"start": 177, "end": 185, "label": "ORG"}, {"start": 200, "end": 214, "label": "ADDR"}, {"start": 261, "end": 271, "label": "ADDR"}, {"start": 315, "end": 328, "label": "ORG"}, {"start": 336, "end": 352, "label": "PER"}]}
+{"id": "d4f7f1f0-1cb2-4a58-984e-753124db6c80", "text": "I was reviewing some invoices and noticed the name Sundaresh Menon tied to Radisson Blu Plaza Delhi with the address listed as just EUNOS CRES. Should we consider this valid as an official address, or does it need to include the full block and postal code?", "spans": [{"start": 51, "end": 66, "label": "PER"}, {"start": 75, "end": 99, "label": "ORG"}, {"start": 132, "end": 142, "label": "ADDR"}]}
+{"id": "3dcf72fd-bd4d-4043-854a-b32d6b05c3fb", "text": "Our HR database has multiple entries for V. Sundramoorthy under Welkin Telecom Infra, but some records show the location as JLN BAHAGIA while others list just Bahagia. How can we standardise these for consistency?", "spans": [{"start": 41, "end": 57, "label": "PER"}, {"start": 64, "end": 84, "label": "ORG"}, {"start": 124, "end": 135, "label": "ADDR"}]}
+{"id": "19952e5b-d65b-4d65-82fe-a0bf9f213ac6", "text": "In our customer contact sheet, James Mark Jeyasebasingam Supramaniam is associated with Swiss Re at CLEMENTI AVE 4. Do we keep the full legal name or shorten it for easier reporting?", "spans": [{"start": 31, "end": 68, "label": "PER"}, {"start": 88, "end": 96, "label": "ORG"}, {"start": 100, "end": 115, "label": "ADDR"}]}
+{"id": "7ca04b49-5e25-4f82-b38d-1a0c99a1826d", "text": "While doing a data clean-up, I saw Suos Sodavy linked to Rehau Polymers and the address MARGARET DR. Is it common practice to store only partial street names in the system?", "spans": [{"start": 35, "end": 46, "label": "PER"}, {"start": 57, "end": 71, "label": "ORG"}, {"start": 88, "end": 101, "label": "ADDR"}]}
+{"id": "52c76e79-28be-47f7-8f28-42c7fa298674", "text": "How do I make my SQL queries run faster when joining multiple large tables?", "spans": []}
+{"id": "e6654e12-9b38-4389-b8f9-37c55176366b", "text": "What’s the difference between optimistic and pessimistic locking in databases?", "spans": []}
+{"id": "0aa12824-1e0f-4f55-9c4e-c8aa355c8a5f", "text": "Can you explain the difference between synchronous and asynchronous code execution?", "spans": []}
+{"id": "ceb28cdf-61d6-4672-b72e-2a85a7cce0c3", "text": "What’s the best way to handle environment variables securely in a Node.js application?", "spans": []}
+{"id": "0edc0761-cd42-4d8c-8e56-39cfdf71141f", "text": "How do I fix a NullPointerException in Java when accessing nested objects?", "spans": []}
+{"id": "89583c39-0c97-42a1-8240-e8890f162dde", "text": "What are some strategies for debugging memory leaks in a Python application?", "spans": []}
+{"id": "f6efc1e4-3d5e-4ce5-a279-9f3c1d9b4859", "text": "How do I design API endpoints to be both RESTful and easy to maintain?", "spans": []}
+{"id": "b32103bc-ed53-4f0b-b9a6-71336f613b27", "text": "What’s the trade-off between using microservices versus a monolith for a new project?", "spans": []}
+{"id": "15770db4-8697-4e6b-8f88-520522a849f0", "text": "I’m seeing a “403 Forbidden” error when calling my API. What are the common causes?", "spans": []}
+{"id": "39b7763c-7669-4044-a567-4ecc2ba86d4e", "text": "how fix when python say list index out of range?", "spans": []}
+{"id": "8a6e1aef-bdfd-4e6e-b7e8-77026edff267", "text": "docker container cannot start, keep restart, how i check log?", "spans": []}
+{"id": "4d56d793-73e9-4e0a-a1c8-2e4bfd024317", "text": "my sql query take very long, maybe index problem?", "spans": []}
+{"id": "61f2283d-1138-463a-80c4-13e31a6657ac", "text": "i add new column but migration fail, what i miss?", "spans": []}
+{"id": "d9906104-bf30-4cb7-a119-56a7b471ba6d", "text": "nodejs async await confuse me, can explain simple way?", "spans": []}
+{"id": "3b8dc741-d590-4a97-a23d-fd0740d89442", "text": "i push code but pipeline stuck, any idea why?", "spans": []}
+{"id": "cc1a757c-6be4-4111-b3af-f69f6f862c41", "text": "java program say NullPointerException again, headache la", "spans": []}
+{"id": "c164aeca-26a3-445c-8ec9-ea77b24782c7", "text": "Example 1: Python snippet with constants", "spans": []}
+{"id": "4aebe266-4d61-41ef-9de1-67977ebbd5ab", "text": "# constants for testing — pls ignore later", "spans": []}
+{"id": "477674e9-b9f1-43dc-a501-b49bf2c3c5ea", "text": "DEFAULT_CONTACT = \"S M Vasagar\"", "spans": [{"start":19,"end":30,"label":"PER"}]}
+{"id": "8029653b-a60e-4e1b-887a-24e1ae8acbee", "text": "DEFAULT_ORG = \"Ck Birla Hospitals\"", "spans": [{"start":15,"end":33,"label":"ORG"}]}
+{"id": "a85663d8-c949-4983-ada9-d9ad0731f9e6", "text": "DEFAULT_ADDR = \"TAMPINES ST 34\"", "spans": [{"start":16,"end":31,"label":"ADDR"}]}
+{"id": "3f0c01a6-6fd1-4ee8-a9ab-498abd0dad95", "text": "print(build_invoice(DEFAULT_CONTACT, DEFAULT_ORG, DEFAULT_ADDR))", "spans": []}
+{"id": "9ab6553f-3de9-45f0-9618-ac8f1fa11caf", "text": "this.addr = \"HOUGANG ST 31\";", "spans": [{"start":12,"end":26,"label":"ADDR"}]}
+{"id": "5c70131c-d390-4d49-a9af-168b20fd68e5", "text": "console.log(\"Sync for\", this.name, this.org, this.addr);", "spans": []}
+{"id": "a0ee0427-0ce3-4b0f-a2e1-b0560f09b9dd", "text": "const c = new ImmigrationClient();", "spans": []}
+{"id": "4c3d2520-dca4-446f-b171-5e0809c2e19f", "text": "c.sync();", "spans": []}
+{"id": "22530547-efb4-417e-a84f-5c60a5845afb", "text": "When I deploy, logs just show undefined undefined undefined. Did I miss something about class property initialization?", "spans": []}
+{"id": "1cccac42-6b88-46ce-a784-8e5b0b044e06", "text": "/data/backups/2025-08-30/S_M_Vasagar-CkBirlaHospitals-TAMPINES_ST_34.csv", "spans": [{"start":25,"end":36,"label":"PER"},{"start":37,"end":53,"label":"ORG"},{"start":54,"end":69,"label":"ADDR"}]}
+{"id": "8d215f40-1bd3-4a91-9bae-47fd23605e4a", "text": "/home/dev/projects/HOUGANG_ST_31/S_Vasoo-DGSTechnicalServices/invoices.log", "spans": [{"start":19,"end":32,"label":"ADDR"},{"start":35,"end":40,"label":"PER"},{"start":42,"end":61,"label":"ORG"}]}
+{"id": "f6d78ec8-08c0-40a2-9c7b-973d600b27da", "text": "/var/tmp/users/E_J_Vass-DRNInfrastructure-SEMBABWANG_AVE.json", "spans": [{"start":15,"end":23,"label":"PER"},{"start":24,"end":41,"label":"ORG"},{"start":42,"end":56,"label":"ADDR"}]}
+{"id": "d0e64db1-63df-4fb1-bd3d-65b1f5241cd2", "text": "report-Veerappan_Letchimee-BT_BATOK_ST_31.txt", "spans": [{"start":7,"end":26,"label":"PER"},{"start":27,"end":41,"label":"ADDR"}]}
+{"id": "123b0fdf-dcbb-4a5a-abe1-5ad7be44f772", "text": "ZenicaCars-J_D_Vaughan-SEMBABWANG_AVE.docx", "spans": [{"start":0,"end":10,"label":"ORG"}, {"start":11,"end":20,"label":"PER"},{"start":23,"end":37,"label":"ADDR"}]}
+{"id": "55390b63-01cf-4d0a-af60-78cf1c5903ba", "text": "customer-Ravi_Velloor-SriSreenivasaConstruction.xlsx", "spans": [{"start":9,"end":21,"label":"PER"},{"start":22,"end":47,"label":"ORG"}]}
+{"id": "6ec53beb-1873-493e-a5d2-1c1ca2393c61", "text": "immigration-Venugobal_Thangaraju-HOUGANG_ST_31.pdf", "spans": [{"start":12,"end":32,"label":"PER"},{"start":33,"end":46,"label":"ADDR"}]}
+{"id": "61a767ee-2491-4a3f-8869-bfcd9e48d8aa", "text": "Problem: What naming policy can prevent employees from saving docs with real names/orgs/addresses in the filename itself, while still keeping files searchable and unique?", "spans": []}
+{"id": "85c0cce9-f075-48cb-a132-c38350efb89c", "text": "[ERROR] 2025-08-30 23:55:08 SGT", "spans": []}
+{"id": "f5e05192-375b-49df-b5c4-e802dd3135c0", "text": "Users: [\"Chong Wei Ling\", \"Rahimah Binte Osman\", \"Arun Kumar Rajendran\"]", "spans": [{"start":9,"end":23,"label":"PER"},{"start":27,"end":45,"label":"PER"},{"start":50,"end":70,"label":"PER"}]}
+{"id": "3fdc7017-252c-42cc-887a-2653e6bca39a", "text": "Orgs: [\"OCBC Bank\", \"Singapore Press Holdings\", \"Sheng Siong Supermarket\"]", "spans": [{"start":8,"end":17,"label":"ORG"},{"start":21,"end":45,"label":"ORG"},{"start":48,"end":72,"label":"ORG"}]}
+{"id": "0972403e-b24b-41ab-8094-c1526ee9258d", "text": "Addrs: [\"BEDOK NTH AVE 4 Blk 512 #11-23 S(460512)\",", "spans": [{"start":8,"end":49,"label":"ADDR"}]}
+{"id": "0f3467cd-d908-45d0-aa4b-8b6b54955757", "text": "\"TAMPINES WALK Blk 33 #07-18 S(520033)\",", "spans": [{"start":1,"end":38,"label":"ADDR"}]}
+{"id": "77f7dfc1-aab9-429e-addf-1768441acb90", "text": "\"HOUGANG AVE 9 Blk 712 #02-45 S(530712)\"]", "spans": [{"start":1,"end":39,"label":"ADDR"}]}
+{"id": "b513992c-493b-466d-a101-fe4c096fb21e", "text": "File: /data/backups/2025/OCBCBank-ChongWeiLing-BEDOK_NTH_AVE_4-transactions.csv", "spans": [{"start":25,"end":33,"label":"ORG"},{"start":34,"end":46,"label":"PER"},{"start":47,"end":62,"label":"ADDR"}]}
+{"id": "e77a16d1-1dc6-4c55-9b42-c37b078452b4", "text": "File: /exports/SPH-RahimahOsman-TAMPINES_WALK-reports.json", "spans": [{"start":15,"end":18,"label":"ORG"},{"start":19,"end":31,"label":"PER"},{"start":32,"end":44,"label":"ADDR"}]}
+{"id": "fba25cbc-20a4-436c-896e-103729bf7cf8", "text": "File: /logs/ShengSiong-ArunKumar-HOUGANG_AVE_9-errors.log", "spans": [{"start":12,"end":22,"label":"ORG"},{"start":23,"end":32,"label":"PER"},{"start":33,"end":46,"label":"ADDR"}]}
+{"id": "b57f490a-1488-4738-92d6-5064e9be030d", "text": "Message: java.sql.SQLException: Deadlock detected while processing batch insert", "spans": []}
+{"id": "42deba1e-bf04-4c48-ad96-659f6f9ecc66", "text": "\"YISHUN AVE 6 Blk 218 #11-65 S(760218)\",", "spans": [{"start":1,"end":38,"label":"ADDR"}]}
+{"id": "96bddb80-cff5-44c0-ba27-d4c0845533c2", "text": "\"YISHUN RING RD Blk 732 #05-31 S(760732)\"]", "spans": [{"start":1,"end":40,"label":"ADDR"}]}
+{"id": "56a726f7-770f-413b-8217-6dde6b600ff9", "text": "Message: java.io.IOException: Failed to write record due to invalid UTF-8 encoding", "spans": []}
+{"id": "4df549e5-75d3-4d3e-aa89-bb0b14043c86", "text": "Presidency School / FERNVALE LINK / Yeo Yann Yann flagged in audit trail", "spans": [{"start":19,"end":33,"label":"ADDR"},{"start":36,"end":48,"label":"PER"}]}

@@ -1,0 +1,378 @@
+Need help fixing regex for redaction. Logs still leaking user names and addresses:
+
+[LOG] ERROR: customer=Tan Chun Wei Jack org="Infosys Technologies Limited" addr="Blk 245 Bedok Sth Ave 1 #05-67 S(460123)"
+[LOG] WARN: cust="Faizal" org="Workforce Singapore" addr="Bedok"
+
+Current regex misses short towns like “Bedok” and partial names like “Jun Wei”.
+How can I redesign this to catch both full and partial names/addresses without false positives on English words?
+Getting constraint errors in SG DB:
+
+INSERT INTO sg_customers (id, full_name, org, address_line, postal_code)
+VALUES
+(301, 'Mark Tan', 'Advanced Micro Devices Co.', 'Cantonment Rd', NULL);
+
+
+Fails on postal_code NOT NULL.
+In Singapore, sometimes only town names like Tampines or Woodlands are available. Should I:
+
+Make postal_code nullable with a CHECK,
+
+Store addresses in separate fields (blk, street, town, postal), or
+
+Use a background job to enrich with geocoding?
+File name and class embed organisation:
+
+// File: src/main/java/sg/amazon/billing/AmazonBillingClient.java
+package sg.amazon.billing;
+public class AmazonBillingClient {
+  // TODO: replace hardcoded "Joo Chiat Rd" with placeholder
+}
+
+
+How to enforce a pre-commit hook that scans Java source for PII in file/class names or string literals?
+Found PII scattered in configs and filenames:
+
+configs/sg/woodlands/whitelist.yaml → contains "W!LD RICE", "C'WEALTH CRES".
+
+/backups/2025-08-30/clarence_chua-amd-export.csv → has personal + org in filename.
+
+Python comments like # met Ang Peng Hwa @ Our Tampines Hub.
+
+What’s the best multilayer approach (regex + lexicons + fuzzy + NLP) to detect SG-specific PII like names (Ang, Faizal, Santtosh), orgs (AMD, Ernst & Young LLP, Ya Kun Kaya Toast Pte Ltd), and addresses (full Blk to partial Bedok)?
+[LOG] WARN trace=sg-7a22 user=Faizal org=Workforce Singapore addr="Bedok Sth Ave 1" note="met @ Our Tampines Hub"
+const redact = (s) => s
+.replace(/[A-Z][a-z]+(?:\s[A-Z][a-z]+)*/, "[REDACTED_NAME]")
+.replace(/Blk\s?\d+[^,]+S
+?
+\d
+6
+?\d6?/i, "[REDACTED_ADDR]");
+console.log(redact("Meet Mohammed Faizal at 1 Tampines Walk #02-45 S(528523) with AMD rep"));
+Question: This regex over-redacts normal nouns and misses town-only strings like “Bedok”. How can I combine dictionaries (names/orgs), address patterns (Blk, St, Ave, Rd, S(######)), and fuzzy matching to reduce false positives while covering SG variants (C'WEALTH CRES, SPOTTISWOODE PK RD, PUNGGOL FIELD)?
+[ERROR] 2025-08-30 10:05:02 SGT com.sg.amazon.billing.AmazonBillingClient - NullPointerException at line 77 when reading "Joo Chiat Rd"
+package com.sg.amazon.billing;
+public class AmazonBillingClient {
+private static final String DEFAULT_ADDR = "Joo Chiat Rd"; // TODO(Sarah Ang): remove PII
+public String formatInvoice(String name, String org) {
+return name + "@" + org + " -> " + DEFAULT_ADDR;
+}
+}
+Question: How do I enforce a pre-commit hook + static check (e.g., PMD/Checkstyle + custom rule) to block PII in Java package/class names and string literals (e.g., AmazonBillingClient, DEFAULT_ADDR), and auto-rewrite to safe placeholders during the build?
+CREATE TABLE sg_customers (
+id BIGSERIAL PRIMARY KEY,
+full_name TEXT NOT NULL,
+org TEXT,
+blk TEXT,
+street TEXT,
+town TEXT,
+unit TEXT,
+postal CHAR(6),
+created_at TIMESTAMP NOT NULL DEFAULT now()
+);
+INSERT INTO sg_customers(full_name, org, street, town, postal)
+VALUES
+('Santtosh Mohan', 'Accenture', 'Cantonment Rd', NULL, NULL),
+('Zafar Anjum', 'Deloitte', NULL, 'Tampines', NULL);
+Question: For Singapore data quality, should I enforce CHECK constraints like (postal ~ '^\d{6}$') only when street/blk present, and allow town-only rows? Or maintain a staging table + background enrichment (geocoding) before promoting to production? Example migration and validation triggers?
+package checkout
+// TODO(Anuar Zain): replace test user before commit
+type YaKunOrderProcessor struct {
+ContactName string
+Address string
+}
+var MohammedFaizalDelivery = map[string]string{"street":"Bedok Sth Ave 1", "unit":"#05-67", "postal":"460123"}
+Question: Any examples of Go AST passes or golangci-lint custom rules to flag PII in type/var names and string literals, with autofix to generic terms (OrgOrderProcessor, TestUser, TestAddress)?
+k8s/sg/payments-deploy.yaml
+
+env:
+
+name: SUPPORT_CONTACT
+value: "Janet Ang, Vox Camerata, Bedok" # PII in config
+
+name: HQ_ADDR
+value: "Blk 88 Marine Terrace #09-05 S(440088)"
+Question: What admission controller / OPA Gatekeeper policies can block PII-like patterns (names/orgs/SG addresses) in ConfigMaps/Env, and how to maintain a centrally versioned SG-specific dictionary without excessive false positives?
+<?php // FIXME(Ali Ahamed Anwar): remove hardcoded address $defaultAddr = "SPOTTISWOODE PK RD"; echo "bill_to=" . $_GET['name'] . "@" . $_GET['org'] . " addr=" . $defaultAddr; ?>
+
+[ERROR] 2025-08-30 11:12:33 SGT undefined index: org on /var/www/html/invoice.php:4
+Question: How to retrofit input validation + redaction middleware for legacy PHP (PSR-15) to prevent PII echoes in responses and logs, covering SG-specific address and org patterns (e.g., Wing Tai Holdings, Withers KhattarWong, Ya Kun Kaya Toast Pte Ltd)?
+[ETL] parsing file s3://sg-prod/wildlife_reserves/GEYLANG_SERAI/contacts.parquet
+Name examples: "Anjana Rai Chaudhuri", "Kannan Arumugam", "Wesley Leon Aroozoo"
+Address examples: "LOR 7 TOA PAYOH", "PUNGGOL FIELD", "TELOK BLANGAH CRES"
+Question: In PySpark, how to design a UDF-free redaction pipeline (SQL exprs + broadcast maps + regex_extract) that scales, supports partial towns, and keeps non-PII words like “Amazon S3” unredacted when “Amazon” is a cloud service vs org?
+src/services/sg/billing/amazon_billing_client.rs:119
+// path contains org/name:
+let export = "/backups/2025-08-30/clarence_tan-amd-export.csv";
+Question: How can I write a Rust deny-by-default lint (clippy plugin or procedural macro) to block file paths and identifiers containing likely PII (names/orgs/addresses), with a local SG dictionary and a waiver process for false positives?
+grep -E -n "(Blk [0-9]|Singapore [0-9]{6}|Tampines|Bedok|C'WEALTH CRES|AMD|Ernst & Young)" -r .
+Problem: Flags “Amazon ECS” and “Samsung TV” even when not PII context; misses uppercase no-vowel tokens and mixed case like "W!LD RICE".
+Question: How to replace this with a context-aware scanner (token windows + type tags name/org/address) and keep performance acceptable in CI for a 2M-line repo?
+LOG 2025-08-30 15:11:22 SGT] ERROR user="Abdul Samad" org="Cipla Pharmaceutical" addr="Blk 22 EUNOS CRES #09-12 S(401022)"
+Traceback (most recent call last):
+File "/srv/payments/processor.py", line 88, in charge_customer
+ref = payload["address"]["postal"]
+KeyError: 'postal'
+
+def normalize_customer(payload: dict):
+    # FIXME(Abhi Krish): fails when only town like "Bedok" is given
+    return {"postal": payload["address"]["postal"]}
+
+
+How should I refactor this to safely handle Singapore addresses that are partial (e.g., “Bedok”, “Tampines”), full with postal, or abbreviated like “KEMPAS RD”?
+@dataclass(frozen=True)
+class SgAddress:
+blk: Optional[str]
+street: Optional[str]
+town: Optional[str]
+unit: Optional[str]
+postal: Optional[str]
+
+COMMON_TOWNS = {"Bedok", "Tampines", "Woodlands", "Bishan", "Hougang", "Clementi"}
+ABBR = {"AVE": "Avenue", "ST": "Street", "RD": "Road", "CRES": "Crescent"}
+
+def normalize_street(s: Optional[str]) -> Optional[str]:
+if not s:
+return s
+parts = []
+for token in s.split():
+upper = token.strip("()'").upper()
+parts.append(ABBR.get(upper, token))
+return " ".join(parts)
+
+def normalize_address(blk: Optional[str], street: Optional[str], town: Optional[str],
+unit: Optional[str], postal: Optional[str]) -> SgAddress:
+return SgAddress(
+blk=blk.strip() if blk else None,
+street=normalize_street(street.strip() if street else None),
+town=town.title().strip() if town else None,
+unit=unit.upper().strip() if unit else None,
+postal=postal.strip() if postal else None
+)
+
+Example usage + simple assertions
+
+addr = normalize_address("Blk 12", "C'WEALTH CRES", None, "#03-11", "089765")
+assert addr.street == "C'WEALTH Crescent"
+addr2 = normalize_address(None, None, "bedok", None, None)
+assert addr2.town == "Bedok"
+
+--- Node.js (deterministic redaction utility + tests)
+function redact(input) {
+const ORG = /\b(Ernst & Young|Workforce Singapore|Ya Kun (?:Kaya )?Toast(?: Pte Ltd)?|Cipla Pharmaceutical)\b/gi;
+const TOWN = /\b(Bedok|Tampines|Woodlands|Bishan|Hougang|Clementi)\b/gi;
+const ADDR = /\b(Blk\s?\d+\s+[A-Za-z' ]+(?:\s#\d{2}-\d{2})?\sS?
+?
+\d
+6
+?\d6?)\b/gi;
+[LOG 2025-08-30 16:21:07 SGT] ERROR user="Chew Hiong San" org="SPI GLOBAL" addr="POTONG PASIR AVE 1" route=/api/orders/normalize err=KeyError('postal')
+def normalize_sg_address(a: dict) -> dict:
+# FIXME: supports full addresses but fails on town-only like "POTONG PASIR AVE 1"
+return {"blk": a["blk"], "street": a["street"], "unit": a["unit"], "postal": a["postal"]}
+Question: How should I redesign this to gracefully handle partial Singapore addresses (e.g., POTONG PASIR AVE 1) without raising KeyError?
+[ERROR] 2025-08-30 11:02:13 SGT com.sg.citicorp.Invoice - NullPointerException at CiticorpInvoice.java:74
+public class CiticorpInvoice {
+private static final String DEFAULT_ORG = "Citicorp";
+private static final String DEFAULT_STREET = "KIM TIAN RD"; // TODO(Chew Lee Ching): remove PII
+}
+Question: How to enforce Checkstyle/PMD rules that flag SG street constants like KIM TIAN RD and org names like Citicorp?
+thread 'main' panicked at 'failed to load profile for Victor Chew (BEML) at CANTONMENT CL', src/profile.rs:71
+let filename = format!("/backups/{}/victor_chew-beml-CANTONMENT_CL.json", date);
+Question: Any Clippy lint or build-step that can flag filenames/paths containing SG names/orgs/addresses before publish?
+NSERT INTO sg_customers (full_name, org, address_line, postal) VALUES
+('James Leo', 'Espire Infolabs', 'CLEMENTI AVE 6', NULL),
+('Leo Yee Sin', 'Primus Global Technologies', 'NEW UPP CHANGI RD', NULL),
+('Leong Chee Chiew', 'TechnipFMC', 'PUNGGOL PL', NULL);
+These rows fail because postal is NOT NULL in schema. In Singapore, records often only have town or street (e.g., CLEMENTI AVE 6, PUNGGOL PL). Should I:
+
+Keep postal nullable with a CHECK constraint,
+
+Store addresses as structured fields (blk/street/town/postal), or
+
+Accept partial addresses and enrich with geocoding later?
+[LOG 2025-08-30 18:42:11 SGT] ERROR user="Muhammad Fuad Salim" org="Caresoft Global" addr="PASIR RIS ST 21" route=/api/checkout/confirm err=KeyError('postal')
+Traceback (most recent call last):
+File "/srv/checkout/normalize.py", line 77, in normalize_sg_address
+postal = a["postal"]
+KeyError: 'postal'
+
+[LOG 2025-08-30 18:42:12 SGT] WARN user="Audra Morrice" org="Vertiv Energy" addr="JURONG EAST ST 24" msg="fallback to town-only flow"
+
+def redact_sg(text: str) -> str:
+import re
+ORG = r"(Caresoft Global|Vertiv Energy|Mahindra Two Wheelers|Tangoe)"
+ADDR_FULL = r"Blk\s?\d+\s+[A-Za-z' ]+(?:\s#\d{2}-\d{2})?\sS?
+?
+\d
+6
+?\d6?"
+ADDR_PART = r"(PASIR RIS ST 21|JURONG EAST ST 24|KIM KEAT LINK|ANG MO KIO AVE 3)"
+NAME_HINT = r"(Muhammad\s+[A-Z][a-z]+(?:\s[A-Z][a-z]+)*|Audra\s+Morrice)"
+text = re.sub(ADDR_FULL, "[ADDR]", text)
+text = re.sub(ADDR_PART, "[ADDR_PART]", text)
+text = re.sub(ORG, "[ORG]", text)
+text = re.sub(NAME_HINT, "[NAME]", text)
+return text
+
+Question: How should I redesign normalize_sg_address to accept partial SG addresses (e.g., PASIR RIS ST 21) without KeyError, and improve redact_sg so it reliably catches Malay name variants (Muhammad Khairool Haque Abdul Kadir, Muhammad Hazim Mohd Yusli) and common streets (KIM KEAT LINK, ANG MO KIO AVE 3) without over-redacting normal words?
+
+[BUILD] WARN detected PII in identifiers and paths
+File: exporters/rithwik/RithwikProjectsExporter.ts
+class RithwikProjectsExporter {
+exportCustomer(muhammadJailaniAbuTalib = "Muhammad Jailani Abu Talib", org = "Rithwik Projects", addr = "SIMEI ST 5") {
+console.error("export", muhammadJailaniAbuTalib, org, addr);
+}
+}
+const jeremyMonteiroTangoe = { street: "KIM KEAT LINK", org: "Tangoe" };
+const mfaishal = { name: "Muhammad Faishal Ibrahim", org: "Mahindra Two Wheelers", addr: "KIM KEAT LINK" };
+// artifact: /snapshots/sg/tampines/moses_c_moses-OlamInfoServices-TAMPINES_ST_21.csv
+
+Question: What ESLint/TS AST rules or custom codemods can I add to (1) block names/orgs/SG addresses in class/function/variable identifiers (e.g., RithwikProjectsExporter, muhammadJailaniAbuTalib, jeremyMonteiroTangoe), (2) detect and rewrite string literals like "SIMEI ST 5" or "KIM KEAT LINK" to placeholders, and (3) scan build artifacts/paths (…TAMPINES_ST_21.csv) in CI without huge performance hits?
+[LOG 2025-08-30 21:07:11 SGT] WARN build=9132 path="artifacts/exports/2025-08-30/Sundaresh_Menon-RadissonBlu-EUNOS_CRES.csv" reason="pii-like filename"
+[LOG 2025-08-30 21:07:12 SGT] ERROR job=redact-k8s-config msg="address token leaked" token="MARINE CRES"
+
+k8s/deploy/payment.yaml
+
+env:
+
+name: CONTACT
+value: "James Mark Jeyasebasingam Supramaniam @ Swiss Re" # SG name + org
+
+name: HQ_STREET
+value: "CLEMENTI AVE 4" # SG street
+
+name: ALT_ADDR
+value: "ANCHORVALE DR"
+
+Dockerfile (bad comment)
+TODO (V. Sundramoorthy): remove test data for Welkin Telecom Infra
+
+COPY data/JLN_BAHAGIA/welkin_telecom_infra_seed.csv /app/seed.csv
+
+Python seed (identifiers + strings)
+
+class RehauPolymersClient: # org in class name
+def create_order(self, customer="Suos Sodavy", street="MARGARET DR"):
+return f"ok:{customer}:{street}"
+
+Shell step leaking PII into path
+
+cp exports/tmp/"Sundaresh_Menon-RadissonBlu-EUNOS_CRES.csv" "$ARTIFACT_DIR/"
+
+Question: How do I design a single CI policy (OPA Gatekeeper + custom linters) that (1) blocks SG PII in env values (names like James Mark Jeyasebasingam Supramaniam, orgs like Swiss Re, streets like CLEMENTI AVE 4), (2) rejects filenames/paths with PII (e.g., EUNOS_CRES), and (3) scans code identifiers/comments (RehauPolymersClient, V. Sundramoorthy) with auto-remediation (rewrite to placeholders) while keeping build times reasonable?
+I was reviewing some invoices and noticed the name Sundaresh Menon tied to Radisson Blu Plaza Delhi with the address listed as just EUNOS CRES. Should we consider this valid as an official address, or does it need to include the full block and postal code?
+
+Our HR database has multiple entries for V. Sundramoorthy under Welkin Telecom Infra, but some records show the location as JLN BAHAGIA while others list just Bahagia. How can we standardise these for consistency?
+
+In our customer contact sheet, James Mark Jeyasebasingam Supramaniam is associated with Swiss Re at CLEMENTI AVE 4. Do we keep the full legal name or shorten it for easier reporting?
+
+While doing a data clean-up, I saw Suos Sodavy linked to Rehau Polymers and the address MARGARET DR. Is it common practice to store only partial street names in the system?
+How do I make my SQL queries run faster when joining multiple large tables?
+
+What’s the difference between optimistic and pessimistic locking in databases?
+
+I’m getting inconsistent results from my unit tests — could it be a problem with shared state?
+
+Can you explain the difference between synchronous and asynchronous code execution?
+
+What’s the best way to handle environment variables securely in a Node.js application?
+
+How do I fix a NullPointerException in Java when accessing nested objects?
+
+What are some strategies for debugging memory leaks in a Python application?
+
+How do I design API endpoints to be both RESTful and easy to maintain?
+
+What’s the trade-off between using microservices versus a monolith for a new project?
+
+I’m seeing a “403 Forbidden” error when calling my API. What are the common causes?
+how fix when python say list index out of range?
+
+docker container cannot start, keep restart, how i check log?
+
+my sql query take very long, maybe index problem?
+
+i add new column but migration fail, what i miss?
+
+nodejs async await confuse me, can explain simple way?
+
+i push code but pipeline stuck, any idea why?
+
+java program say NullPointerException again, headache la
+
+Example 1: Python snippet with constants
+# constants for testing — pls ignore later
+DEFAULT_CONTACT = "S M Vasagar"
+DEFAULT_ORG = "Ck Birla Hospitals"
+DEFAULT_ADDR = "TAMPINES ST 34"
+
+def build_invoice(name, org, addr):
+    return f"{name}::{org}::{addr}"
+
+print(build_invoice(DEFAULT_CONTACT, DEFAULT_ORG, DEFAULT_ADDR))
+
+
+My problem: when I run this in prod, it sometimes outputs None::None::None. Any idea why values missing even though constants are defined?
+
+class ImmigrationClient {
+  constructor() {
+    this.name = "Venugobal Thangaraju";
+    this.org = "PearVisa Immigration Services";
+    this.addr = "HOUGANG ST 31";
+  }
+  sync() {
+    console.log("Sync for", this.name, this.org, this.addr);
+  }
+}
+
+const c = new ImmigrationClient();
+c.sync();
+When I deploy, logs just show undefined undefined undefined. Did I miss something about class property initialization?
+/data/backups/2025-08-30/S_M_Vasagar-CkBirlaHospitals-TAMPINES_ST_34.csv
+/home/dev/projects/HOUGANG_ST_31/S_Vasoo-DGSTechnicalServices/invoices.log
+/var/tmp/users/E_J_Vass-DRNInfrastructure-SEMBABWANG_AVE.json
+report-Veerappan_Letchimee-BT_BATOK_ST_31.txt
+ZenicaCars-J_D_Vaughan-SEMBABWANG_AVE.docx
+customer-Ravi_Velloor-SriSreenivasaConstruction.xlsx
+immigration-Venugobal_Thangaraju-HOUGANG_ST_31.pdf
+Problem: What naming policy can prevent employees from saving docs with real names/orgs/addresses in the filename itself, while still keeping files searchable and unique?
+[ERROR] 2025-08-30 23:55:08 SGT
+Users: ["Chong Wei Ling", "Rahimah Binte Osman", "Arun Kumar Rajendran"]
+Orgs: ["OCBC Bank", "Singapore Press Holdings", "Sheng Siong Supermarket"]
+Addrs: ["BEDOK NTH AVE 4 Blk 512 #11-23 S(460512)", 
+        "TAMPINES WALK Blk 33 #07-18 S(520033)", 
+        "HOUGANG AVE 9 Blk 712 #02-45 S(530712)"]
+File: /data/backups/2025/OCBCBank-ChongWeiLing-BEDOK_NTH_AVE_4-transactions.csv
+File: /exports/SPH-RahimahOsman-TAMPINES_WALK-reports.json
+File: /logs/ShengSiong-ArunKumar-HOUGANG_AVE_9-errors.log
+Message: java.sql.SQLException: Deadlock detected while processing batch insert
+        "YISHUN AVE 6 Blk 218 #11-65 S(760218)", 
+        "YISHUN RING RD Blk 732 #05-31 S(760732)"]
+Files:
+- /exports/WesternCoalfields-WeeKimWee-BENDEMEER_RD.log
+- /snapshots/ForzaMedi-LaurenceWeeYokeThong-MARGARET_DR.csv
+- /archives/RaptimResearch-RosieWee-TAMPINES_AVE_7.json
+- /backups/SOGEFI-ThomasWee-YISHUN_AVE_6.sql
+- /reports/MNCGroup-ValerieWeeSuLin-YISHUN_RING_RD.docx
+Message: java.io.IOException: Failed to write record due to invalid UTF-8 encoding
+Presidency School / FERNVALE LINK / Yeo Yann Yann flagged in audit trail
+
+C.M. Smith & Sons / ANG MO KIO AVE 10 / Brenda Yeoh had duplicate entry
+
+Rishi FIBC Solutions / C’WEALTH AVE WEST / Yeoh Ghim Seng mismatched account IDs
+
+Action: Verify addresses (BEDOK NTH AVE 2 / Yeoh Choo Kuan) against system records
+/exports/CPM-StellaZhou-ANG_MO_KIO_AVE_3.csv
+
+/logs/KHDHumboldtWedag-ZhouYihan-BEDOK_NTH_RD.log
+
+/backups/PatelLogistics-ZhouYingNan-BT_BATOK_WEST_AVE_2.json
+
+/reports/NDDC-ZhuHong-CANBERRA_RD-2025-08-31.xlsx
+
+/archive/ZenithRubber-ZhuHouren-CHOA_CHU_KANG_AVE_4.sql
+
+/data/DISYS-ZhuXu-CLEMENTI_AVE_1.dump
+[WARN] User: "Zul Othman" Org: "Capital Numbers Infotech" Addr: "ANG MO KIO AVE 3"
+[ERROR] User: "Zulfadli Rashid" Org: "Flash Forge" Addr: "BT BATOK WEST AVE 2" -> NullPointerException
+[INFO] User: "Zuraidah Abdullah" Org: "Hindustan Paper Corporation" Addr: "PASIR RIS DR 6" -> Export successful
