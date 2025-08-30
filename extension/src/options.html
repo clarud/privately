@@ -1,10 +1,62 @@
-<!doctype html><html><body style="font:14px system-ui;padding:12px">
-  <h3>Privacy Guardian Settings</h3>
-  <label><input id="enabled" type="checkbox" checked> Enabled</label><br><br>
-  <label>Mode:
-    <select id="mode"><option>balanced</option><option>strict</option></select>
-  </label>
-  <h4>Categories</h4>
-  <div id="cats"></div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privately - Options</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h2>Privately Options</h2>
+      <p>Customize your privacy detection settings</p>
+    </header>
+    
+    <section class="settings-section">
+      <h3>General Settings</h3>
+      
+      <div class="setting-item">
+        <label class="toggle-label">
+          <input id="enabled" type="checkbox" checked>
+          <span class="toggle-text">Enable Privacy Detection</span>
+        </label>
+      </div>
+      
+      <div class="setting-item">
+        <label for="mode">Detection Mode:</label>
+        <select id="mode">
+          <option value="balanced">Balanced</option>
+          <option value="strict">Strict</option>
+        </select>
+      </div>
+    </section>
+    
+    <section class="settings-section">
+      <h3>Detection Categories</h3>
+      <p class="section-description">Choose which types of sensitive data to detect</p>
+      <div id="categories" class="categories-grid"></div>
+    </section>
+    
+    <section class="settings-section">
+      <h3>Custom Replacement Data</h3>
+      <p class="section-description">Set your own fake data for replacements</p>
+      <div id="fake-data" class="fake-data-grid"></div>
+      <button id="reset-fake-data" class="button-secondary">Reset to Defaults</button>
+    </section>
+    
+    <section class="settings-section">
+      <h3>Allowlist</h3>
+      <p class="section-description">Sites where privacy detection is disabled</p>
+      <div id="allowlist"></div>
+    </section>
+    
+    <div class="actions">
+      <button id="save-settings" class="button-primary">Save Settings</button>
+      <button id="reset-all" class="button-secondary">Reset All</button>
+    </div>
+  </div>
+  
   <script src="options.js"></script>
-</body></html>
+</body>
+</html>

@@ -1,12 +1,12 @@
 {
   "manifest_version": 3,
-  "name": "Privacy Guardian",
+  "name": "Privately",
   "version": "0.1.0",
-  "description": "Grammarly-like inline privacy detector.",
+  "description": "Inline privacy detector.",
   "icons": {
-    "16": "assets/icon16.png",
-    "48": "assets/icon48.png",
-    "128": "assets/icon128.png"
+    "16": "assets/privately_logo.png",
+    "48": "assets/privately_logo.png",
+    "128": "assets/privately_logo.png"
   },
   "permissions": ["storage"],
   "host_permissions": ["http://localhost:8000/*"],
@@ -15,9 +15,20 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["src/content.js"],
+      "js": [
+        "src/config.js",
+        "src/utils.js",
+        "src/validators.js",
+        "src/state.js",
+        "src/dom-helpers.js",
+        "src/detection.js",
+        "src/ui-manager.js",
+        "src/templates.js",
+        "src/content-main.js"
+      ],
       "css": ["src/overlay.css"],
-      "run_at": "document_idle"
+      "run_at": "document_idle",
+      "all_frames": true
     }
   ]
 }
