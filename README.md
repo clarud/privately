@@ -44,7 +44,7 @@ Privately combines **regex-based validators** (for exact identifiers like NRIC, 
   Combines fast **regex validators** (for structured data like emails, phone numbers, NRIC, credit cards) with a **fine-tuned DistilBERT-base-uncased model** (for fuzzy PII like names and addresses). Detection runs in real-time on every input box in Chrome.
 
 - **Inline Tooltips**  
-  - Underline detected text and display category (e.g., NAME, ADDR, EMAIL).  
+  - Display detected text and display category (e.g., NAME, ADDR, EMAIL).  
   - One-click actions: **Remove**, **Replace with custom placeholder**, **Skip once**, or **Ignore all** for that category.  
 
 - **User Control & Transparency**  
@@ -154,7 +154,8 @@ The model is a fine-tuned **DistilBERT-base-uncased** for token classification:
   - Hugging Face Transformers → Optimum ONNX → quantized INT8.  
 
 - **API Communication**:  
-  - Chrome extension → FastAPI `/detect` endpoint.  
+  - Chrome extension → FastAPI `/detect` endpoint.
+  - Hosted on Render
   - JSON response with spans + labels.  
 
 ---
