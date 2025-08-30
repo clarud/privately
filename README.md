@@ -1,6 +1,6 @@
 # Privately
 
-![Privately Screenshot](extension/assets/app-image.jpg)  
+![Privately Screenshot](extension/assets/privately.png)  
 *<small>Privately</small>*  
 
 **Privately** is a Chrome extension that protects users from unintentionally leaking sensitive information in prompts before submitting them to AI systems. It is designed for developers, students, and knowledge workers who frequently include **code, configs, or personal data** into AI tools.
