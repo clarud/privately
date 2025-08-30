@@ -1,0 +1,20 @@
+{"id": "206ed57f-9fbb-4bd0-abcc-a89823593cf4", "text": "TODO (V. Sundramoorthy): remove test data for Welkin Telecom Infra", "spans": [{"start": 6, "end": 23, "label": "PER"}, {"start": 46, "end": 67, "label": "ORG"}]}
+{"id": "471665aa-da3b-407c-a975-8fcef2bad460", "text": "COPY data/JLN_BAHAGIA/welkin_telecom_infra_seed.csv /app/seed.csv", "spans": [{"start": 10, "end": 21, "label": "ADDR"}]}
+{"id": "0489ab36-d0f2-4ceb-8288-2d187d840d52", "text": "Python seed (identifiers + strings)", "spans": []}
+{"id": "4ad0aeda-c22f-48f9-a217-1e3c0ef8c653", "text": "private static final String DEFAULT_STREET = \"KIM TIAN RD\"; // TODO(Chew Lee Ching): remove PII", "spans": [{"start": 46, "end": 57, "label": "ADDR"}, {"start": 68, "end": 82, "label": "PER"}]}
+{"id":"2f93bb72-29cf-4c2e-8ca9-36354cc76650","text":"Question: How to enforce Checkstyle/PMD rules that flag SG street constants like jurong east and org names like ibm?","spans":[{"start":81,"end":92,"label":"ADDR"},{"start":112,"end":115,"label":"ORG"}]}
+{"id": "5a21615f-386a-4099-9791-ba3c0c9958bc", "text": "class SgAddress:", "spans": []}
+{"id": "18551510-2809-4d77-a9b7-cd697c6402aa", "text": "blk: Optional[str]", "spans": []}
+{"id": "21a88488-11b7-4458-8567-47b07f7438b9", "text": "street: Optional[str]", "spans": []}
+{"id": "24564295-e08b-4ade-8e1e-9a735afadf58", "text": "// File: src/main/java/sg/amazon/billing/AmazonBillingClient.java", "spans": [{"start":26, "end":32, "label":"ORG"}, {"start":41, "end":47, "label":"ORG"}]}
+{"id": "b5a6e264-4da5-4aa9-8753-60e988fe1647", "text": "package sg.amazon.billing;", "spans": [{"start":11, "end":17, "label":"ORG"}]}
+{"id": "0734c794-c4e6-4db0-afd6-3ef0304603dc", "text": "public class AmazonBillingClient {", "spans": [{"start":13, "end":19, "label":"ORG"}]}
+{"id": "ab30487a-ec9d-467c-8d5f-f9757671d324", "text": "// TODO: replace hardcoded \"Joo Chiat Rd\" with placeholder", "spans": [{"start":28, "end":40, "label":"ADDR"}]}
+{"id": "21e668d9-e785-4c5c-8466-908153600a19", "text": "Files:", "spans": []}
+{"id": "7bc7f6fa-9db2-4c3e-abaa-94ed96852705", "text": "- /exports/WesternCoalfields-WeeKimWee-BENDEMEER_RD.log", "spans": [{"start":11,"end":28,"label":"ORG"},{"start":29,"end":38,"label":"PER"},{"start":39,"end":51,"label":"ADDR"}]}
+{"id": "a4572438-921f-497e-be33-efca49be59d5", "text": "- /snapshots/ForzaMedi-LaurenceWeeYokeThong-MARGARET_DR.csv", "spans": [{"start":13,"end":22,"label":"ORG"},{"start":23,"end":43,"label":"PER"},{"start":44,"end":55,"label":"ADDR"}]}
+{"id": "fe28556e-0f36-4b4a-9607-e5b0472bed73", "text": "- /archives/RaptimResearch-RosieWee-TAMPINES_AVE_7.json", "spans": [{"start":12,"end":26,"label":"ORG"},{"start":27,"end":35,"label":"PER"},{"start":36,"end":50,"label":"ADDR"}]}
+{"id": "132d2f97-0ef3-4a0c-a15b-e4db37c951bb", "text": "- /backups/SOGEFI-ThomasWee-YISHUN_AVE_6.sql", "spans": [{"start":18,"end":27,"label":"PER"},{"start":28,"end":40,"label":"ADDR"}]}
+{"id": "6f038877-6664-4fec-9413-cb6d2ec0b8aa", "text": "- /reports/MNCGroup-ValerieWeeSuLin-YISHUN_RING_RD.docx", "spans": [{"start":20,"end":35,"label":"PER"},{"start":36,"end":50,"label":"ADDR"}]}
+{"id": "7abd9e78-e75a-40ce-be13-4afec7f9d947", "text": "def build_invoice(name, org, addr):", "spans": []}
+{"id": "74e232d3-0d0f-47f1-90f7-d7881942b361", "text": "return f\"{name}::{org}::{addr}\"", "spans": []}
