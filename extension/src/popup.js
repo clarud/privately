@@ -1,10 +1,9 @@
 // Default preferences with all detection categories
 const defaults = {
   enabled: true,
-  mode: "balanced",
   categories: {
     EMAIL: true, SG_PHONE: true, URL: true, IP: true, IP_PRIVATE: true,
-    NRIC: true, POSTAL_SG: true, CARD: true, IBAN: true,
+    NRIC: true, POSTAL_SG: true, CARD: true,
     JWT: true, AWS_KEY: true, SECRET: true, PRIVATE_KEY: true,
     AUTH_HEADER: true, SET_COOKIE: true, FILEPATH: true, UUID: true,
     BASE64_LONG: true, HEX_LONG: true, NAME: true, ADDRESS: true
@@ -15,7 +14,7 @@ const defaults = {
 // Enhanced label colors for better visual distinction
 const labelColors = {
   EMAIL: "blue", SG_PHONE: "green", URL: "cyan", IP: "purple", IP_PRIVATE: "purple",
-  NRIC: "amber", POSTAL_SG: "amber", CARD: "red", IBAN: "red",
+  NRIC: "amber", POSTAL_SG: "amber", CARD: "red",
   JWT: "orange", AWS_KEY: "orange", SECRET: "red", PRIVATE_KEY: "red",
   AUTH_HEADER: "purple", SET_COOKIE: "purple", FILEPATH: "gray", UUID: "gray",
   BASE64_LONG: "indigo", HEX_LONG: "indigo", NAME: "teal", ADDRESS: "teal"
@@ -24,7 +23,7 @@ const labelColors = {
 // Category groupings for better organization
 const categoryGroups = {
   "Contact & Personal": ["EMAIL", "SG_PHONE", "NAME", "ADDRESS"],
-  "Financial & IDs": ["CARD", "IBAN", "NRIC"],
+  "Financial & IDs": ["CARD", "NRIC"],
   "Security & Keys": ["SECRET", "JWT", "AWS_KEY", "PRIVATE_KEY"],
   "Technical": ["URL", "IP", "IP_PRIVATE", "UUID", "BASE64_LONG", "HEX_LONG"],
   "System & Headers": ["AUTH_HEADER", "SET_COOKIE", "FILEPATH", "POSTAL_SG"]
@@ -90,11 +89,6 @@ function renderCounts(pg_counts, userPreferences){
       }
     });
   }
-  
-  // Calculate and update score based on enabled categories only
-  const enabledCounts = enabledCategories.reduce((total, cat) => total + (pg_counts[cat] || 0), 0);
-  const score = Math.max(0, 100 - Math.min(100, enabledCounts * 2));
-  document.getElementById("score").textContent = `${score}`;
 }
 
 function loadAll(){
@@ -102,7 +96,6 @@ function loadAll(){
     { pg_prefs: defaults, pg_counts: {} },
     ({ pg_prefs, pg_counts }) => {
       document.getElementById("enabled").checked = !!pg_prefs.enabled;
-      document.getElementById("mode").value = pg_prefs.mode || "balanced";
       renderCounts(pg_counts, pg_prefs);
     }
   );
@@ -115,26 +108,12 @@ document.getElementById("enabled").addEventListener("change", (e)=>{
   });
 });
 
-document.getElementById("mode").addEventListener("change", (e)=>{
-  chrome.storage.local.get({ pg_prefs: defaults }, ({ pg_prefs })=>{
-    pg_prefs.mode = e.target.value;
-    chrome.storage.local.set({ pg_prefs });
-  });
-});
-
 document.getElementById("resetCounts").addEventListener("click", ()=>{
   chrome.storage.local.set({ pg_counts: {} }, loadAll);
 });
 
 document.getElementById("openOptions").addEventListener("click", ()=>{
   chrome.runtime.openOptionsPage();
-});
-
-document.getElementById("openTest").addEventListener("click", ()=>{
-  // opens a simple page with inputs to try the inline UX
-  chrome.tabs.create({
-    url: "https://www.w3schools.com/tags/tryit.asp?filename=tryhtml_textarea"
-  });
 });
 
 loadAll();

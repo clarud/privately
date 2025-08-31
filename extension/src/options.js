@@ -13,7 +13,6 @@ const ALL_DETECTION_CATEGORIES = {
   NRIC: true,
   POSTAL_SG: true,
   CARD: true,
-  IBAN: true,
   JWT: true,
   AWS_KEY: true,
   SECRET: true,
@@ -28,29 +27,28 @@ const ALL_DETECTION_CATEGORIES = {
   ADDRESS: true
 };
 
-// Default fake data map for options page
+// Default fake data map for options page (Singapore context)
 const DEFAULT_FAKE_DATA = {
-  EMAIL: "alex.murphy@example.org",
-  SG_PHONE: "+65 9123 4567",
-  URL: "https://example.com/safe-link",
-  IP: "192.0.2.1",
-  IP_PRIVATE: "10.0.0.1",
-  CARD: "4242 4242 4242 4242",
-  NRIC: "S1234567A",
-  POSTAL_SG: "123456",
-  IBAN: "GB82WEST12345698765432",
-  JWT: "eyJhbGciOiJIUzI1NiJ9.fake.signature",
-  AWS_KEY: "AKIAIOSFODNN7EXAMPLE",
-  SECRET: "fake_secret_key_123",
-  PRIVATE_KEY: "-----BEGIN PRIVATE KEY-----\\nFAKE_KEY_DATA\\n-----END PRIVATE KEY-----",
-  AUTH_HEADER: "Authorization: Bearer fake_token_123",
-  SET_COOKIE: "Set-Cookie: session=fake_session_id",
-  FILEPATH: "/home/user/documents/file.txt",
-  UUID: "550e8400-e29b-41d4-a716-446655440000",
-  BASE64_LONG: "ZmFrZV9iYXNlNjRfZGF0YV9leGFtcGxl",
-  HEX_LONG: "deadbeefcafebabe1234567890abcdef",
-  NAME: "Jordan Avery",
-  ADDRESS: "221B Baker Street, London"
+  EMAIL: "lim.wei.ming@example.sg",
+  SG_PHONE: "+65 9876 5432",
+  URL: "https://example.sg/secure-portal",
+  IP: "203.116.43.22",
+  IP_PRIVATE: "192.168.1.100",
+  CARD: "5555 5555 5555 4444",
+  NRIC: "S9876543B",
+  POSTAL_SG: "238900",
+  JWT: "eyJhbGciOiJIUzI1NiJ9.singapore.token",
+  AWS_KEY: "AKIASG7EXAMPLE1234567",
+  SECRET: "sg_live_secret_key_789abc",
+  PRIVATE_KEY: "-----BEGIN PRIVATE KEY-----\\nSG_PRIVATE_KEY_DATA\\n-----END PRIVATE KEY-----",
+  AUTH_HEADER: "Authorization: Bearer sg_token_xyz789",
+  SET_COOKIE: "Set-Cookie: sg_session=abc123def456",
+  FILEPATH: "C:\\Users\\LimWeiMing\\Documents\\report.pdf",
+  UUID: "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+  BASE64_LONG: "U2luZ2Fwb3JlUHJpdmF0ZURhdGFFbmNvZGVk",
+  HEX_LONG: "53696e6761706f7265486578446174614578616d706c65",
+  NAME: "Tan Wei Ling",
+  ADDRESS: "Blk 123 Ang Mo Kio Ave 3 #05-67 S(560123)"
 };
 
 // Category descriptions for better UX
@@ -63,7 +61,6 @@ const CATEGORY_DESCRIPTIONS = {
   NRIC: "Singapore NRIC/FIN",
   POSTAL_SG: "Singapore postal codes",
   CARD: "Credit card numbers",
-  IBAN: "International bank accounts",
   JWT: "JSON Web Tokens",
   AWS_KEY: "AWS access keys",
   SECRET: "API keys & secrets",
@@ -81,7 +78,6 @@ const CATEGORY_DESCRIPTIONS = {
 // Default preferences with all available categories
 const DEFAULT_PREFERENCES = {
   enabled: true,
-  mode: "balanced",
   categories: { ...ALL_DETECTION_CATEGORIES },
   fakeData: { ...DEFAULT_FAKE_DATA }
 };
@@ -101,7 +97,6 @@ function initializeOptionsPage() {
     // Ensure all required properties exist with proper defaults
     currentPreferences = {
       enabled: pg_prefs.enabled !== undefined ? pg_prefs.enabled : DEFAULT_PREFERENCES.enabled,
-      mode: pg_prefs.mode || DEFAULT_PREFERENCES.mode,
       categories: { 
         ...DEFAULT_PREFERENCES.categories, 
         ...(pg_prefs.categories || {}) 
@@ -132,7 +127,7 @@ function renderOptionsPage() {
   console.log('Starting to render options page...');
   
   // Check if required DOM elements exist
-  const requiredElements = ['enabled', 'mode', 'categories', 'fake-data'];
+  const requiredElements = ['enabled', 'categories', 'fake-data'];
   const missingElements = [];
   
   requiredElements.forEach(id => {
@@ -163,18 +158,11 @@ function renderOptionsPage() {
  */
 function renderGeneralSettings() {
   const enabledCheckbox = document.getElementById('enabled');
-  const modeSelect = document.getElementById('mode');
 
   enabledCheckbox.checked = currentPreferences.enabled;
-  modeSelect.value = currentPreferences.mode;
 
   enabledCheckbox.onchange = (e) => {
     currentPreferences.enabled = e.target.checked;
-    savePreferences();
-  };
-
-  modeSelect.onchange = (e) => {
-    currentPreferences.mode = e.target.value;
     savePreferences();
   };
 }

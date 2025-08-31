@@ -95,11 +95,11 @@ function initializeEventListeners() {
   
   document.addEventListener('focusin', (event) => {
     const element = event.target;
-    console.log('👆 Focus event on element:', element.tagName, element.type, element);
+    console.log('👆 Focus event on element:', element.tagName, element.type, element.contentEditable, element);
     
     // Check if element is a supported input field
     if (!element.matches(INPUT_FIELD_SELECTOR)) {
-      console.log('❌ Element does not match INPUT_FIELD_SELECTOR');
+      console.log(`❌ Element does not match INPUT_FIELD_SELECTOR: ${element.tagName}${element.type ? `[type="${element.type}"]` : ''}${element.contentEditable ? `[contenteditable="${element.contentEditable}"]` : ''}`);
       return;
     }
     

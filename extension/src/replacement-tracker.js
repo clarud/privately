@@ -23,14 +23,6 @@ const ReplacementTracker = {
   recordProcessedContent: (element, originalText, processedSpans, action = 'replace') => {
     const elementId = ReplacementTracker.getElementId(element);
     const currentText = element.isContentEditable ? element.innerText : element.value;
-    
-    console.log('📝 Recording processed content:', {
-      elementId,
-      action,
-      originalText: originalText.substring(0, 50) + '...',
-      processedSpans: processedSpans.map(s => ({ text: s.text, label: s.label })),
-      currentText: currentText.substring(0, 50) + '...'
-    });
 
     if (!ReplacementTracker.processedContent.has(elementId)) {
       ReplacementTracker.processedContent.set(elementId, {

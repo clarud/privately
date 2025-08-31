@@ -13,7 +13,6 @@ function initializePreferences() {
     // Deep merge to ensure nested objects are properly handled
     userPreferences = {
       enabled: pg_prefs.enabled !== undefined ? pg_prefs.enabled : DEFAULT_PREFERENCES.enabled,
-      mode: pg_prefs.mode || DEFAULT_PREFERENCES.mode,
       categories: { 
         ...DEFAULT_PREFERENCES.categories, 
         ...(pg_prefs.categories || {}) 
@@ -32,7 +31,6 @@ function initializePreferences() {
       const newPrefs = changes.pg_prefs.newValue;
       userPreferences = {
         enabled: newPrefs.enabled !== undefined ? newPrefs.enabled : DEFAULT_PREFERENCES.enabled,
-        mode: newPrefs.mode || DEFAULT_PREFERENCES.mode,
         categories: { 
           ...DEFAULT_PREFERENCES.categories, 
           ...(newPrefs.categories || {}) 

@@ -240,6 +240,12 @@ const DOMHelpers = {
         return;
       }
 
+      // Validate that element matches our INPUT_FIELD_SELECTOR
+      if (!inputElement.matches(INPUT_FIELD_SELECTOR)) {
+        console.warn('⚠️ Element does not match INPUT_FIELD_SELECTOR, skipping highlight:', inputElement.tagName, inputElement.type);
+        return;
+      }
+
       console.log('🎨 Highlighting ALL spans in input field using Grammarly-style overlay:', spans);
 
       // Clear existing highlights first
@@ -420,6 +426,12 @@ const DOMHelpers = {
    */
   clearInputHighlights: (inputElement) => {
     console.log('🧹 Clearing input highlights for:', inputElement?.tagName);
+    
+    // Validate element if it exists
+    if (inputElement && !inputElement.matches(INPUT_FIELD_SELECTOR)) {
+      console.warn('⚠️ Element does not match INPUT_FIELD_SELECTOR, skipping clear:', inputElement.tagName, inputElement.type);
+      return;
+    }
     
     // Remove overlay using cleanup function
     if (inputElement && inputElement._pgCleanupOverlay) {

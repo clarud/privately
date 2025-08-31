@@ -62,8 +62,6 @@ const SmartCategorizer = {
    * Analyze detection result and suggest possible categories
    */
   analyzeDetection: (text, initialCategory, confidence = 1.0) => {
-    console.log('🤔 Analyzing detection ambiguity for:', text, 'Initial:', initialCategory);
-    
     const result = {
       text: text,
       possibleCategories: [initialCategory],
@@ -95,7 +93,6 @@ const SmartCategorizer = {
     // Apply additional context-based rules
     result.possibleCategories = SmartCategorizer.applyContextRules(text, result.possibleCategories);
     
-    console.log('🎯 Categorization result:', result);
     return result;
   },
 

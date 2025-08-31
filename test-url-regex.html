@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>URL Regex Test</title>
+</head>
+<body>
+    <h1>Testing URL Regex</h1>
+    <div id="results"></div>
+    
+    <script>
+        const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/gi;
+        const testTexts = [
+            "Visit https://google.com for search",
+            "Check http://github.com today",
+            "Go to www.facebook.com",
+            "See https://www.linkedin.com/profile",
+            "Invalid: example.com without protocol",
+            "Mixed: https://google.com and www.github.com"
+        ];
+        
+        const results = document.getElementById('results');
+        
+        testTexts.forEach((text, index) => {
+            const div = document.createElement('div');
+            div.innerHTML = `<h3>Test ${index + 1}: ${text}</h3>`;
+            
+            // Reset regex
+            urlRegex.lastIndex = 0;
+            const matches = [];
+            let match;
+            
+            while ((match = urlRegex.exec(text)) !== null) {
+                matches.push({
+                    text: match[0],
+                    start: match.index,
+                    end: match.index + match[0].length
+                });
+            }
+            
+            if (matches.length > 0) {
+                div.innerHTML += `<p style="color: green;">✅ Found ${matches.length} matches:</p>`;
+                matches.forEach(m => {
+                    div.innerHTML += `<p>&nbsp;&nbsp;- "${m.text}" at position ${m.start}-${m.end}</p>`;
+                });
+            } else {
+                div.innerHTML += `<p style="color: red;">❌ No matches found</p>`;
+            }
+            
+            results.appendChild(div);
+        });
+    </script>
+</body>
+</html>

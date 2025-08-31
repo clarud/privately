@@ -25,7 +25,7 @@ const DETECTORS = {
     rx: /(?:\+?65[\s-]?)?[689]\d{7}/g 
   },
   URL: { 
-    rx: /(?:https?:\/\/[^\s'"<>(){}[\]]+|www\.[^\s'"<>(){}[\]]+)/g 
+    rx: /\b(https:\/\/\S+|http:\/\/\S+|www\.\S+)\b/gi
   },
   IP: {
     rx: /\b(?:\d{1,3}\.){3}\d{1,3}\b/g,
@@ -78,34 +78,33 @@ const DETECTORS = {
   },
 };
 
-// Fake data for replacement
+// Fake data for replacement 
 const FAKE_DATA_MAP = {
-  EMAIL: "alex.murphy@example.org",
-  SG_PHONE: "+65 9123 4567",
-  URL: "https://example.com/safe-link",
+  EMAIL: "lim.wei.ming@example.com.sg",
+  SG_PHONE: "+65 8765 4321",
+  URL: "https://example.gov.sg/safe-link",
   IP: "192.0.2.1",
   IP_PRIVATE: "10.0.0.1",
   CARD: "4242 4242 4242 4242",
-  NRIC: "S1234567A",
-  POSTAL_SG: "123456",
+  NRIC: "T0123456Z",
+  POSTAL_SG: "068897",
   JWT: "eyJhbGciOiJIUzI1NiJ9.fake.signature",
   AWS_KEY: "AKIAIOSFODNN7EXAMPLE",
   SECRET: "fake_secret_key_123",
   PRIVATE_KEY: "-----BEGIN PRIVATE KEY-----\nFAKE_KEY_DATA\n-----END PRIVATE KEY-----",
   AUTH_HEADER: "Authorization: Bearer fake_token_123",
   SET_COOKIE: "Set-Cookie: session=fake_session_id",
-  FILEPATH: "/home/user/documents/file.txt",
+  FILEPATH: "/Users/weiming/Documents/report.pdf",
   UUID: "550e8400-e29b-41d4-a716-446655440000",
   BASE64_LONG: "ZmFrZV9iYXNlNjRfZGF0YV9leGFtcGxl",
   HEX_LONG: "deadbeefcafebabe1234567890abcdef",
-  NAME: "Jordan Avery",
-  ADDRESS: "221B Baker Street, London"
+  NAME: "Tan Wei Ling",
+  ADDRESS: "Block 123 Toa Payoh Lorong 4, #05-67, Singapore 310123"
 };
 
 // Default user preferences
 const DEFAULT_PREFERENCES = {
   enabled: true,
-  mode: "balanced",
   categories: {
     EMAIL: true, SG_PHONE: true, URL: true, IP: true, IP_PRIVATE: true,
     NRIC: true, POSTAL_SG: true, CARD: true,
@@ -122,8 +121,11 @@ const INPUT_FIELD_SELECTOR = [
   'input[type="email"]', 
   'input[type="search"]',
   'input[type="tel"]',
+  'input[type="url"]',
+  'input[type="password"]',
+  'input:not([type])', // Default input type is text
   'textarea',
-  '[contenteditable]',
   '[contenteditable="true"]',
-  '[contenteditable=""]'
+  '[contenteditable=""]',
+  '[contenteditable]:not([contenteditable="false"])'
 ].join(', ');
